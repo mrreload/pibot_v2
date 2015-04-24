@@ -1,11 +1,20 @@
 __author__ = 'marc.hoaglin'
 # telnet program example
 import socket, select, string, sys
-import traceback
+import traceback, time
 
 def prompt() :
     sys.stdout.write('<You> ')
     sys.stdout.flush()
+
+def connecttoserver():
+		try:
+			s3.connect((thost, tport))
+		except:
+			print("Unable to connect to: " + thost + ":" + str(tport))
+			sys.exit()
+
+		print 'Connected to remote host. Start sending messages'
 
 #main function
 if __name__ == "__main__":
@@ -35,8 +44,8 @@ if __name__ == "__main__":
 
 	print 'Connected to remote host. Start sending messages'
 	prompt()
-
-	while 1:
+	blconnected = True
+	while blconnected:
 		socket_list = [sys.stdin, s3]
 
 		# Get the list sockets which are readable
@@ -48,7 +57,7 @@ if __name__ == "__main__":
 				data = sock.recv(4096)
 				if not data:
 					print '\nDisconnected from chat server'
-					sys.exit()
+					blconnected = False
 				else :
 					#print data
 					sys.stdout.write(data)
@@ -59,3 +68,6 @@ if __name__ == "__main__":
 				msg = sys.stdin.readline()
 				s3.send(msg)
 				prompt()
+	time.sleep(1)
+	connecttoserver()
+	blconnected = True

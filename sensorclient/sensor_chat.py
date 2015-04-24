@@ -2,13 +2,13 @@ __author__ = 'mrreload'
 
 import socket, select, string, sys, threading, time
 import Queue
-mc = __import__('master_control')
 
 
-class chat_client(object):
+
+class sensor_chat(object):
 	def __init__(self):
 		config = {}
-		execfile("client.conf", config)
+		execfile("sensor.conf", config)
 		self.m_host = config["host"]
 		self.m_port = config["message_port"]
 		self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -54,6 +54,7 @@ class chat_client(object):
 
 
 	def sendcommand(self, cmnd):
+		print("Sending Message: " + cmnd)
 		self.s.sendall(cmnd)
 
 	def receivedata(self, msgq, sockm, pthr):
@@ -63,23 +64,6 @@ class chat_client(object):
 		worker1.start()
 		# master = mc.Player()
 		time.sleep(.5)
-
-	def screen_thread(self, msgq, pthr):
-		worker2 = threading.Thread(name="msgblitter", target=self.blitmsg, args=(msgq, pthr))
-		worker2.setDaemon(True)
-		worker2.start()
-
-	def blitmsg(self, msg_Q, vth):
-		while True:
-			# print "Outer Loop"
-			while not msg_Q.empty():
-				print "getting data from Q"
-				time.sleep(1)
-				dmsg = msg_Q.get()
-				print("Queue data: " + dmsg)
-				vth.update_tele(dmsg)
-
-			time.sleep(2)
 
 
 
