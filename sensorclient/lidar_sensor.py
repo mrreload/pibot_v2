@@ -34,7 +34,7 @@ __author__ = 'marc.hoaglin'
 #             }
 from Adafruit_I2C import Adafruit_I2C
 from time import sleep
-
+i2c_address = 0x62
 
 class Lidar_Lite(Adafruit_I2C):
 	# Lidar Lite address
@@ -73,7 +73,7 @@ class Lidar_Lite(Adafruit_I2C):
 		print ((hival << 8) + loval)
 		sleep(1)
 
-l = Lidar_Lite()
+l = Lidar_Lite(i2c_address)
 l.read_sensor()
 
 
