@@ -38,7 +38,7 @@ p = SensorMain()
 
 while True:
 	sleep(1)
-	p.snd_msg(p.get_sensor_data())
+	p.snd_msg(str(p.get_sensor_data()))
 
 
 
