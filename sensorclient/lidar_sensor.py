@@ -70,5 +70,7 @@ if __name__ == '__main__':
 	while True:
 		loVal = Adafruit_I2C.readU8(sensor_address, DISTANCE_REG_LO)
 		hiVal = Adafruit_I2C.readS8(sensor_address, DISTANCE_REG_HI)
+		print hiVal
+		print loVal
 		print ((hiVal << 8) + loVal)
 		sleep(1) # Output is fun to watch if this is commented out
