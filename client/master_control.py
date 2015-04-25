@@ -5,7 +5,6 @@ import time, Queue, threading, os
 import gi
 gi.require_version('Gst', '1.0')
 from gi.repository import Gst
-from ConfigParser import SafeConfigParser
 
 # Needed for window.get_xid(), xvimagesink.set_window_handle(), respectively:
 # from gi.repository import GdkX11, GstVideo
@@ -23,7 +22,6 @@ def show_video():
 
 class Player(object):
 	def __init__(self):
-		self.cfg_parser = SafeConfigParser()
 		config = {}
 		execfile("client.conf", config)
 		global v_host
@@ -37,7 +35,8 @@ class Player(object):
 		self.window.protocol("WM_DELETE_WINDOW", self.exithandler)
 		self.videoframe = tk.Frame(self.window, width=1280, height=720)
 
-
+		# Keyboard bindings
+		self.setup_key_binds()
 		self.telemetry = tk.Label(self.window, text="Hello, world!", font=("Arial", 12), bg='black', fg="white")
 
 		self.telemetry.place(relwidth=1, height=20)
@@ -50,9 +49,6 @@ class Player(object):
 		self.chat.receivedata(self.msg_q, self.chat.s, self)
 		self.msg_q.put("Waiting for messages!")
 		self.update_tele2()
-
-		# Keyboard bindings
-		self.setup_key_binds()
 
 		# Create GStreamer pipeline
 		self.pipeline = Gst.Pipeline()
@@ -112,22 +108,120 @@ class Player(object):
 	# print "pressed", repr(event.char)
 
 	def setup_key_binds(self):
-		# keybindings = {}
-		# execfile("keybindings.conf", keybindings)
-		self.cfg_parser.read('keybindings.conf')
-		for section_name in self.cfg_parser.sections():
-			for command, key in self.cfg_parser.items(section_name):
-				self.videoframe.bind("<"+key+">", self.keypress(command))
-				self.videoframe.bind("<Button-1>", self.callback)
+		# self.video.bind("<Key>", self.key)
+		self.videoframe.bind("<Button-1>", self.callback)
+		self.videoframe.bind('<Left>', self.leftKey)
+		self.videoframe.bind('<Right>', self.rightKey)
+		self.videoframe.bind('<Up>', self.upKey)
+		self.videoframe.bind('<Down>', self.downKey)
+		self.videoframe.bind('<KeyRelease-Left>', self.move_stop)
+		self.videoframe.bind('<KeyRelease-Right>', self.move_stop)
+		self.videoframe.bind('<KeyRelease-Up>', self.move_stop)
+		self.videoframe.bind('<KeyRelease-Down>', self.move_stop)
+		self.videoframe.bind('<a>', self.leftPan)
+		self.videoframe.bind('<d>', self.rightPan)
+		self.videoframe.bind('<w>', self.upTilt)
+		self.videoframe.bind('<x>', self.downTilt)
+		self.videoframe.bind('<s>', self.centerCam)
+		self.videoframe.bind('<4>', self.leftSweep)
+		self.videoframe.bind('<6>', self.rightSweep)
+		self.videoframe.bind('<8>', self.upSweep)
+		self.videoframe.bind('<2>', self.downSweep)
 
 	def callback(self, event):
 		self.videoframe.focus_set()
 		print "clicked at", event.x, event.y
 
-	def keypress(self, command):
-		self.telemetry.config(text=command)
+	def leftKey(self, event):
+		# print "Left arrow pressed"
+		self.telemetry.config(text="Left")
 		self.telemetry.update_idletasks()
-		self.chat.sendcommand(command)
+		#mc.sendMsg("L")
+		self.chat.sendcommand("L")
+
+	def rightKey(self, event):
+		#print "Right arrow pressed"
+		self.telemetry.config(text="Right")
+		self.telemetry.update_idletasks()
+		self.chat.sendcommand("R")
+
+	def upKey(self, event):
+		#print "Up arrow pressed"
+		self.telemetry.config(text="Forward")
+		self.telemetry.update_idletasks()
+		self.chat.sendcommand("F")
+
+	def downKey(self, event):
+		#print "Down arrow pressed"
+		self.telemetry.config(text="Backward")
+		self.telemetry.update_idletasks()
+		self.chat.sendcommand("B")
+
+	def leftPan(self, event):
+		# print "Left Pan pressed"
+		self.telemetry.config(text="Pan Left")
+		self.telemetry.update_idletasks()
+		# mc.sendMsg("Pan_Left")
+		#chat.sendcommand("Pan_Left")
+		self.chat.sendcommand("Pan_Left")
+
+	def rightPan(self, event):
+		# print "Right Pan pressed"
+		self.telemetry.config(text="Pan Right")
+		self.telemetry.update_idletasks()
+		#chat.sendcommand("Pan_Right")
+		self.chat.sendcommand("Pan_Right")
+
+	def upTilt(self, event):
+		# print "Up Tilt pressed"
+		self.telemetry.config(text="Tilt Up")
+		self.telemetry.update_idletasks()
+		self.chat.sendcommand("Tilt_Up")
+
+	def downTilt(self, event):
+		# print "Down tilt pressed"
+		self.telemetry.config(text="Tilt Down")
+		self.telemetry.update_idletasks()
+		self.chat.sendcommand("Tilt_Down")
+
+	def leftSweep(self, event):
+		# print "Left Pan pressed"
+		self.telemetry.config(text="Pan Left")
+		self.telemetry.update_idletasks()
+		# mc.sendMsg("Pan_Left")
+		#chat.sendcommand("Pan_Left")
+		self.chat.sendcommand("Sweep_Left")
+
+	def rightSweep(self, event):
+		# print "Right Pan pressed"
+		self.telemetry.config(text="Pan Right")
+		self.telemetry.update_idletasks()
+		#chat.sendcommand("Pan_Right")
+		self.chat.sendcommand("Sweep_Right")
+
+	def upSweep(self, event):
+		# print "Up Tilt pressed"
+		self.telemetry.config(text="Tilt Up")
+		self.telemetry.update_idletasks()
+		self.chat.sendcommand("Sweep_Up")
+
+	def downSweep(self, event):
+		# print "Down tilt pressed"
+		self.telemetry.config(text="Tilt Down")
+		self.telemetry.update_idletasks()
+		self.chat.sendcommand("Sweep_Down")
+
+	def centerCam(self, event):
+		# print "Camera/Sensor Reset to Center"
+		self.telemetry.config(text="Camera/Sensor Reset to Center")
+		self.telemetry.update_idletasks()
+		self.chat.sendcommand("Reset")
+
+	def move_stop(self, event):
+		self.telemetry.config(text="Stop")
+		self.telemetry.update_idletasks()
+		#mc.sendMsg("S")
+		self.chat.sendcommand("S")
 
 	def run(self):
 		#self.send_q.put("Hello")
