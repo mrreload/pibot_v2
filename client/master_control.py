@@ -5,6 +5,7 @@ import time, Queue, threading, os
 import gi
 gi.require_version('Gst', '1.0')
 from gi.repository import Gst
+from ConfigParser import SafeConfigParser
 
 # Needed for window.get_xid(), xvimagesink.set_window_handle(), respectively:
 # from gi.repository import GdkX11, GstVideo
@@ -22,6 +23,7 @@ def show_video():
 
 class Player(object):
 	def __init__(self):
+		self.cfg_parser = SafeConfigParser()
 		config = {}
 		execfile("client.conf", config)
 		global v_host
@@ -35,8 +37,7 @@ class Player(object):
 		self.window.protocol("WM_DELETE_WINDOW", self.exithandler)
 		self.videoframe = tk.Frame(self.window, width=1280, height=720)
 
-		# Keyboard bindings
-		self.setup_key_binds()
+
 		self.telemetry = tk.Label(self.window, text="Hello, world!", font=("Arial", 12), bg='black', fg="white")
 
 		self.telemetry.place(relwidth=1, height=20)
@@ -49,6 +50,9 @@ class Player(object):
 		self.chat.receivedata(self.msg_q, self.chat.s, self)
 		self.msg_q.put("Waiting for messages!")
 		self.update_tele2()
+
+		# Keyboard bindings
+		self.setup_key_binds()
 
 		# Create GStreamer pipeline
 		self.pipeline = Gst.Pipeline()
@@ -108,11 +112,13 @@ class Player(object):
 	# print "pressed", repr(event.char)
 
 	def setup_key_binds(self):
-		keybindings = {}
-		execfile("keybindings.conf", keybindings)
-		for key, command in keybindings:
-			self.videoframe.bind("<"+key+">", self.keypress(command))
-		self.videoframe.bind("<Button-1>", self.callback)
+		# keybindings = {}
+		# execfile("keybindings.conf", keybindings)
+		self.cfg_parser.read('keybindings.conf')
+		for section_name in self.cfg_parser.sections():
+			for command, key in self.cfg_parser.items(section_name):
+				self.videoframe.bind("<"+key+">", self.keypress(command))
+				self.videoframe.bind("<Button-1>", self.callback)
 
 	def callback(self, event):
 		self.videoframe.focus_set()

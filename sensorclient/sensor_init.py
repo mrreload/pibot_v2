@@ -4,6 +4,7 @@ from time import sleep
 schat = __import__('sensor_chat')
 sensor = __import__('lidar_sensor')
 
+
 class SensorMain(object):
 	def __init__(self):
 		config = {}
