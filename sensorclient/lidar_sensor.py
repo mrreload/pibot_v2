@@ -63,18 +63,18 @@ class Lidar_Lite(Adafruit_I2C):
 	STAT_EYE = 0x80
 
 	def read_sensor(self):
-		print "write hi"
+
 		hival = Adafruit_I2C.write8(self.sensor_address, self.MEASURE_REG, self.MEASURE_VAL)
 		sleep(.02)
-		print "read lo"
+
 		loval = Adafruit_I2C.readU8(self.sensor_address, self.DISTANCE_REG_LO)
-		print "read hi"
+
 		hival = Adafruit_I2C.readS8(self.sensor_address, self.DISTANCE_REG_HI)
-		print ((hival << 8) + loval)
-		sleep(1)
+		return ((hival << 8) + loval)
+
 
 l = Lidar_Lite(i2c_address)
-l.read_sensor()
+print l.read_sensor()
 
 
 
