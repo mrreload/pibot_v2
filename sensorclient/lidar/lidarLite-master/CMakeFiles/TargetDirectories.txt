@@ -1,0 +1,1 @@
+/home/pi/lidarLite-master/CMakeFiles/lidarTest.dir

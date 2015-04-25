@@ -32,6 +32,7 @@ __author__ = 'marc.hoaglin'
 #             return( (unsigned char) wiringPiI2CReadReg8(fd, STATUS_REG) );
 #             }
 from Adafruit_I2C import Adafruit_I2C
-sensor_address =
+# Lidar Lite address
+sensor_address = Adafruit_I2C(0x62)
 def lidar_init():
 	fd =

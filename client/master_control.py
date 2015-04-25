@@ -111,7 +111,7 @@ class Player(object):
 		keybindings = {}
 		execfile("keybindings.conf", keybindings)
 		for key, command in keybindings:
-			self.videoframe.bind(key, self.keypress(command))
+			self.videoframe.bind("<"+key+">", self.keypress(command))
 		self.videoframe.bind("<Button-1>", self.callback)
 
 	def callback(self, event):
