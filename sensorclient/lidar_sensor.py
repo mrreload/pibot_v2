@@ -65,12 +65,14 @@ if __name__ == '__main__':
 	sensor_address = Adafruit_I2C(0x62)
 	# lid = Lidar_Lite()
 	MEASURE_REG = 0x00
+	MEASURE_VAL = 0x04
 	DISTANCE_REG_HI = 0x0f
 	DISTANCE_REG_LO = 0x10
 	while True:
+		hiVal = Adafruit_I2C.write8(sensor_address, MEASURE_REG, MEASURE_VAL);
 		loVal = Adafruit_I2C.readU8(sensor_address, DISTANCE_REG_LO)
 		hiVal = Adafruit_I2C.readS8(sensor_address, DISTANCE_REG_HI)
 		print hiVal
 		print loVal
 		print ((hiVal << 8) + loVal)
-		sleep(1) # Output is fun to watch if this is commented out
+		sleep(1)
