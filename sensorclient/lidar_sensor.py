@@ -63,7 +63,7 @@ if __name__ == '__main__':
 
 	from time import sleep
 	sensor_address = Adafruit_I2C(0x62)
-	lid = Lidar_Lite()
+	# lid = Lidar_Lite()
 	__MEASURE_REG = 0x00
 
 	while True:
