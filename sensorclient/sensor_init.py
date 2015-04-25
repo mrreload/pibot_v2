@@ -25,7 +25,7 @@ class SensorMain(object):
 
 	def get_sensor_data(self):
 		sens = sensor.Lidar_Lite(self.saddr)
-		return sensor.read_sensor()
+		return sens.read_sensor()
 
 	def snd_msg(self, msg):
 		self.sc.sendcommand(msg)
