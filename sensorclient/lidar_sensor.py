@@ -32,7 +32,40 @@ __author__ = 'marc.hoaglin'
 #             return( (unsigned char) wiringPiI2CReadReg8(fd, STATUS_REG) );
 #             }
 from Adafruit_I2C import Adafruit_I2C
-# Lidar Lite address
-sensor_address = Adafruit_I2C(0x62)
-def lidar_init():
-	fd =
+
+class Lidar_Lite(Adafruit_I2C):
+	# Lidar Lite address
+
+	MEASURE_VAL = 0x04
+
+	STATUS_REG  = 0x47
+	DISTANCE_REG_HI = 0x0f
+	DISTANCE_REG_LO = 0x10
+	VERSION_REG = 0x41
+
+	# ERROR_READ -1
+
+	# Status Bits
+	STAT_BUSY = 0x01
+	STAT_REF_OVER = 0x02
+	STAT_SIG_OVER = 0x04
+	STAT_PIN = 0x08
+	STAT_SECOND_PEAK = 0x10
+	STAT_TIME = 0x20
+	STAT_INVALID = 0x40
+	STAT_EYE = 0x80
+
+
+
+
+
+if __name__ == '__main__':
+
+	from time import sleep
+	sensor_address = Adafruit_I2C(0x62)
+	lid = Lidar_Lite()
+	__MEASURE_REG = 0x00
+
+	while True:
+		print Adafruit_I2C.readU8(sensor_address, __MEASURE_REG)
+		sleep(1) # Output is fun to watch if this is commented out
