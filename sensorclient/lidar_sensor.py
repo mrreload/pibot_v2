@@ -63,6 +63,8 @@ if __name__ == '__main__':
 
 	from time import sleep
 	sensor_address = Adafruit_I2C(0x62)
+	print Adafruit_I2C.getPiRevision()
+	print Adafruit_I2C.getPiI2CBusNumber()
 	# lid = Lidar_Lite()
 	MEASURE_REG = 0x00
 	MEASURE_VAL = 0x04
