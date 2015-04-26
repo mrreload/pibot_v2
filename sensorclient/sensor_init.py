@@ -12,8 +12,8 @@ class SensorMain(object):
 		args = config["sensor_command"]
 		self.cmd = shlex.split(args)
 		self.saddr = config["i2c_address"]
-		self.sc = schat.sensor_chat()
-		self.sc.connecttoserver()
+		# self.sc = schat.sensor_chat()
+		# self.sc.connecttoserver()
 
 
 	def run_cmd(self):
