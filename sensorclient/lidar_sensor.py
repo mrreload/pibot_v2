@@ -31,7 +31,7 @@ class Lidar_Lite(Adafruit_I2C):
 	def read_sensor(self):
 
 		hival = Adafruit_I2C.write8(self.sensor_address, self.MEASURE_REG, self.MEASURE_VAL)
-		sleep(.02)
+		sleep(.01)
 
 		loval = Adafruit_I2C.readU8(self.sensor_address, self.DISTANCE_REG_LO)
 
