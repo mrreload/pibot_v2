@@ -8,10 +8,16 @@ ms = __import__('messageserv')
 
 class msg_server(object):
 	def __init__(self):
+		config = {}
+		execfile("client.conf", config)
+		global v_host
+		v_port = config["vid_port"]
+		global v_port
+		m_port = config["msg_port"]
 		# List to keep track of socket descriptors
 		self.CONNECTION_LIST = []
 		self.RECV_BUFFER = 4096  # Advisable to keep it as an exponent of 2
-		self.PORT = cfg.msg_port
+		self.PORT = m_port
 		self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		# this has no effect, why ?
 		self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
