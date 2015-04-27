@@ -1,8 +1,9 @@
 __author__ = 'mrreload'
-import shlex, sys, subprocess
+import shlex, sys, subprocess, threading
 from time import sleep
 schat = __import__('sensor_chat')
-sensor = __import__('lidar_sensor')
+sensor1 = __import__('lidar_sensor')
+sensor2 = __import__('compass')
 
 
 class SensorMain(object):
@@ -14,7 +15,8 @@ class SensorMain(object):
 		self.saddr = config["i2c_address"]
 		# self.sc = schat.sensor_chat()
 		# self.sc.connecttoserver()
-
+		self.sens1 = sensor1.Lidar_Lite(self.saddr)
+		self.sens2 = sensor2.Compass()
 
 	def run_cmd(self):
 		result = "hello"
@@ -24,12 +26,27 @@ class SensorMain(object):
 			print "Unexpected error:", sys.exc_info()[0]
 		return result
 
-	def get_sensor_data(self):
-		sens = sensor.Lidar_Lite(self.saddr)
-		return sens.read_sensor()
+	def lidar(self):
+		while True:
+			self.snd_msg(self.sens1.read_sensor())
+
+	def compass(self):
+		while True:
+			self.snd_msg(self.sens2.get_bearing())
 
 	def snd_msg(self, msg):
 		self.sc.sendcommand(msg)
+
+	def spawn_threads(self):
+		t1 = threading.Thread(name="lidar", target=self.lidar)
+		t1.setDaemon(True)
+		t1.start()
+
+		t2 = threading.Thread(name="compass", target=self.compass)
+		t2.setDaemon(True)
+		t2.start()
+		while True:
+			sleep(2)
 
 
 p = SensorMain()
@@ -37,11 +54,7 @@ p = SensorMain()
 # p.snd_msg(output)
 # print("output: " + output)
 
-for i in range(0, 500):
-	print str(p.get_sensor_data())
-# while True:
-# 	# sleep(1)
-# 	p.snd_msg(str(p.get_sensor_data()))
+p.spawn_threads()
 
 
 
