@@ -104,124 +104,22 @@ class Player(object):
 			autovideosink.set_property("sync", "false")
 			videoconvert.link(autovideosink)
 
-	# def key(self, event):
-	# print "pressed", repr(event.char)
-
 	def setup_key_binds(self):
-		# self.video.bind("<Key>", self.key)
+		keybindings = {}
+		execfile("keybindings.conf", keybindings)
+		for command, key in keybindings.iteritems():
+			if isinstance(key, str):
+				self.videoframe.bind(key, lambda event, arg=command: self.keypress(event, arg))
 		self.videoframe.bind("<Button-1>", self.callback)
-		self.videoframe.bind('<Left>', self.leftKey)
-		self.videoframe.bind('<Right>', self.rightKey)
-		self.videoframe.bind('<Up>', self.upKey)
-		self.videoframe.bind('<Down>', self.downKey)
-		self.videoframe.bind('<KeyRelease-Left>', self.move_stop)
-		self.videoframe.bind('<KeyRelease-Right>', self.move_stop)
-		self.videoframe.bind('<KeyRelease-Up>', self.move_stop)
-		self.videoframe.bind('<KeyRelease-Down>', self.move_stop)
-		self.videoframe.bind('<a>', self.leftPan)
-		self.videoframe.bind('<d>', self.rightPan)
-		self.videoframe.bind('<w>', self.upTilt)
-		self.videoframe.bind('<x>', self.downTilt)
-		self.videoframe.bind('<s>', self.centerCam)
-		self.videoframe.bind('<4>', self.leftSweep)
-		self.videoframe.bind('<6>', self.rightSweep)
-		self.videoframe.bind('<8>', self.upSweep)
-		self.videoframe.bind('<2>', self.downSweep)
 
 	def callback(self, event):
 		self.videoframe.focus_set()
 		print "clicked at", event.x, event.y
 
-	def leftKey(self, event):
-		# print "Left arrow pressed"
-		self.telemetry.config(text="Left")
+	def keypress(self, event, command):
+		self.telemetry.config(text=command)
 		self.telemetry.update_idletasks()
-		#mc.sendMsg("L")
-		self.chat.sendcommand("L")
-
-	def rightKey(self, event):
-		#print "Right arrow pressed"
-		self.telemetry.config(text="Right")
-		self.telemetry.update_idletasks()
-		self.chat.sendcommand("R")
-
-	def upKey(self, event):
-		#print "Up arrow pressed"
-		self.telemetry.config(text="Forward")
-		self.telemetry.update_idletasks()
-		self.chat.sendcommand("F")
-
-	def downKey(self, event):
-		#print "Down arrow pressed"
-		self.telemetry.config(text="Backward")
-		self.telemetry.update_idletasks()
-		self.chat.sendcommand("B")
-
-	def leftPan(self, event):
-		# print "Left Pan pressed"
-		self.telemetry.config(text="Pan Left")
-		self.telemetry.update_idletasks()
-		# mc.sendMsg("Pan_Left")
-		#chat.sendcommand("Pan_Left")
-		self.chat.sendcommand("Pan_Left")
-
-	def rightPan(self, event):
-		# print "Right Pan pressed"
-		self.telemetry.config(text="Pan Right")
-		self.telemetry.update_idletasks()
-		#chat.sendcommand("Pan_Right")
-		self.chat.sendcommand("Pan_Right")
-
-	def upTilt(self, event):
-		# print "Up Tilt pressed"
-		self.telemetry.config(text="Tilt Up")
-		self.telemetry.update_idletasks()
-		self.chat.sendcommand("Tilt_Up")
-
-	def downTilt(self, event):
-		# print "Down tilt pressed"
-		self.telemetry.config(text="Tilt Down")
-		self.telemetry.update_idletasks()
-		self.chat.sendcommand("Tilt_Down")
-
-	def leftSweep(self, event):
-		# print "Left Pan pressed"
-		self.telemetry.config(text="Pan Left")
-		self.telemetry.update_idletasks()
-		# mc.sendMsg("Pan_Left")
-		#chat.sendcommand("Pan_Left")
-		self.chat.sendcommand("Sweep_Left")
-
-	def rightSweep(self, event):
-		# print "Right Pan pressed"
-		self.telemetry.config(text="Pan Right")
-		self.telemetry.update_idletasks()
-		#chat.sendcommand("Pan_Right")
-		self.chat.sendcommand("Sweep_Right")
-
-	def upSweep(self, event):
-		# print "Up Tilt pressed"
-		self.telemetry.config(text="Tilt Up")
-		self.telemetry.update_idletasks()
-		self.chat.sendcommand("Sweep_Up")
-
-	def downSweep(self, event):
-		# print "Down tilt pressed"
-		self.telemetry.config(text="Tilt Down")
-		self.telemetry.update_idletasks()
-		self.chat.sendcommand("Sweep_Down")
-
-	def centerCam(self, event):
-		# print "Camera/Sensor Reset to Center"
-		self.telemetry.config(text="Camera/Sensor Reset to Center")
-		self.telemetry.update_idletasks()
-		self.chat.sendcommand("Reset")
-
-	def move_stop(self, event):
-		self.telemetry.config(text="Stop")
-		self.telemetry.update_idletasks()
-		#mc.sendMsg("S")
-		self.chat.sendcommand("S")
+		self.chat.sendcommand(command)
 
 	def run(self):
 		#self.send_q.put("Hello")
