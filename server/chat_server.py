@@ -9,7 +9,7 @@ ms = __import__('messageserv')
 class msg_server(object):
 	def __init__(self):
 		config = {}
-		execfile("client.conf", config)
+		execfile("server.conf", config)
 		global v_host
 		v_port = config["vid_port"]
 		global v_port
