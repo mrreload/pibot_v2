@@ -13,8 +13,8 @@ class SensorMain(object):
 		args = config["sensor_command"]
 		self.cmd = shlex.split(args)
 		self.saddr = config["i2c_address"]
-		# self.sc = schat.sensor_chat()
-		# self.sc.connecttoserver()
+		self.sc = schat.sensor_chat()
+		self.sc.connecttoserver()
 		self.sens1 = sensor1.Lidar_Lite(self.saddr)
 		self.sens2 = sensor2.Compass()
 
@@ -35,7 +35,7 @@ class SensorMain(object):
 			self.snd_msg(self.sens2.get_bearing())
 
 	def snd_msg(self, msg):
-		schat.sendcommand(msg)
+		self.sc.send_data()
 
 	def spawn_threads(self):
 		t1 = threading.Thread(name="lidar", target=self.lidar)

@@ -14,7 +14,7 @@ class sensor_chat(object):
 		self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		self.s.settimeout(2)
-		self.msg_q = Queue.Queue(maxsize=0)
+		# self.msg_q = Queue.Queue(maxsize=0)
 
 	def listenmsg(self, mq, sl, th):
 		blconnected = True
@@ -34,7 +34,7 @@ class sensor_chat(object):
 					else:
 						#print data
 						sys.stdout.write(data)
-						th.msg_q.put(data)
+						# th.msg_q.put(data)
 						# th.update_tele(data)
 
 					# self.prompt()
@@ -53,7 +53,7 @@ class sensor_chat(object):
 		print 'Connected to remote host. Start sending messages'
 
 
-	def sendcommand(self, cmnd):
+	def send_data(self, cmnd):
 		print("Sending Message: " + cmnd)
 		self.s.sendall(cmnd)
 
