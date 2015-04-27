@@ -54,7 +54,7 @@ class sensor_chat(object):
 
 
 	def send_data(self, cmnd):
-		print("Sending Message: " + cmnd)
+		print("Sending Message: " + str(cmnd))
 		self.s.sendall(cmnd)
 
 	def receivedata(self, msgq, sockm, pthr):
