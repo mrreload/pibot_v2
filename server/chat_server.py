@@ -4,7 +4,6 @@ __author__ = 'mrreload'
 import socket, select, sys, traceback, Queue
 
 ms = __import__('messageserv')
-cfg = __import__('config')
 
 
 class msg_server(object):
