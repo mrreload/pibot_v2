@@ -26,13 +26,13 @@ class MessageServ(object):
 		print "Received message: " + data
 		if data == "exit":
 			os.exit(1)
-		elif data == "Left":
+		elif data == "left":
 			pc.go_left()
-		elif data == "Right":
+		elif data == "right":
 			pc.go_right()
-		elif data == "Forward":
+		elif data == "forward":
 			pc.go_forward()
-		elif data == "Backward":
+		elif data == "backward":
 			pc.go_backward()
 		# elif data == "LS":
 		# 	pc.stop_left()
@@ -42,35 +42,35 @@ class MessageServ(object):
 		# 	pc.stop_forward()
 		# elif data == "BS":
 		# 	pc.stop_backward()
-		elif data == "Stop":
+		elif data == "stop":
 			pc.do_stop()
-		elif data == "SweepLeft":
+		elif data == "sweep_left":
 			self.pan_move = self.pan_min
 			pt.pan(self.pan_move)
-		elif data == "SweepRight":
+		elif data == "sweep_right":
 			self.pan_move = self.pan_max
 			pt.pan(self.pan_move)
-		elif data == "SweepUp":
+		elif data == "sweep_up":
 			self.tilt_move = self.tilt_min
 			pt.tilt(self.tilt_move)
-		elif data == "SweepDown":
+		elif data == "sweep_down":
 			self.tilt_move = self.tilt_max
 			pt.tilt(self.tilt_move)
-		elif data == "TiltUp":
+		elif data == "tilt_up":
 			self.tilt_move -= 5
 			if self.tilt_move >= self.tilt_min:
 				pt.tilt(self.tilt_move)
 			else:
 				print("Min Tilt Already reached, ignoring move request " + str(self.tilt_move))
 				self.tilt_move += 5
-		elif data == "TiltDown":
+		elif data == "tilt_down":
 			self.tilt_move += 5
 			if self.tilt_move <= self.tilt_max:
 				pt.tilt(self.tilt_move)
 			else:
 				print("Max Tilt Already reached, ignoring move request " + str(self.tilt_move))
 				self.tilt_move -= 5
-		elif data == "PanLeft":
+		elif data == "pan_left":
 			self.pan_move -= 5
 			if self.pan_move >= self.pan_min:
 				pt.pan(self.pan_move)
@@ -78,7 +78,7 @@ class MessageServ(object):
 				print("Min Pan Already reached, ignoring move request " + str(self.pan_move))
 				self.pan_move += 5
 			# pt.pan(pan_move)
-		elif data == "PanRight":
+		elif data == "pan_right":
 			self.pan_move += 5
 			if self.pan_move <= self.pan_max:
 				pt.pan(self.pan_move)
@@ -86,11 +86,11 @@ class MessageServ(object):
 				print("Max Pan already reached, ignoring move request " + str(self.pan_move))
 				self.pan_move -= 5
 			# pt.pan(pan_move)
-		elif data == "Reset":
+		elif data == "reset":
 			pt.reset()
 			self.pan_move = self.pan_def
 			self.tilt_move = self.tilt_def
-		elif data == "Sweep":
+		elif data == "sweep":
 			print("Not implemented!")  #os._exit(0)
 		else:
 			print("What happened?")
