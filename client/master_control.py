@@ -109,8 +109,10 @@ class Player(object):
 		execfile("keybindings.conf", keybindings)
 		for command, key in keybindings.iteritems():
 			if isinstance(key, str):
+				print(command, key)
 				self.videoframe.bind(key, lambda event, arg=command: self.keypress(event, arg))
 		self.videoframe.bind("<Button-1>", self.callback)
+
 
 	def callback(self, event):
 		self.videoframe.focus_set()

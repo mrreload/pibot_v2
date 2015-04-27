@@ -61,23 +61,23 @@ class msg_server(object):
 				# Some incoming message from a client
 				else:
 					# Data received from client, process it
-					#try:
+					try:
 					#In Windows, sometimes when a TCP program closes abruptly,
 					# a "Connection reset by peer" exception will be thrown
-					data = self.sock.recv(self.RECV_BUFFER)
-					if data:
-						#broadcast_data("\r" + '<' + str(sock.getpeername()) + '> ' + data)
-						mserv.read_data(data)
-						self.srv_q.put(data)
-						self.broadcast_data(data)
+						data = self.sock.recv(self.RECV_BUFFER)
+						if data:
+							#broadcast_data("\r" + '<' + str(sock.getpeername()) + '> ' + data)
+							mserv.read_data(data)
+							self.srv_q.put(data)
+							self.broadcast_data(data)
 
-					#except:
-					#	print "Unexpected error:", sys.exc_info()[0]
-					#	broadcast_data("Client (%s, %s) is offline" % addr)
-					#	print "Client (%s, %s) is offline" % addr
-					#	sock.close()
-					#	CONNECTION_LIST.remove(sock)
-					#	continue
+					except:
+						print "Unexpected error:", sys.exc_info()[0]
+						broadcast_data("Client (%s, %s) is offline" % addr)
+						print "Client (%s, %s) is offline" % addr
+						self.sock.close()
+						self.CONNECTION_LIST.remove(self.sock)
+						continue
 
 		self.server_socket.close()
 
