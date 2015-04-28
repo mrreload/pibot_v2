@@ -28,14 +28,14 @@ class SensorMain(object):
 
 	def lidar(self):
 		while True:
-			self.snd_msg(self.sens1.read_sensor())
+			self.snd_msg("Lidar," + self.sens1.read_sensor())
 
 	def compass(self):
 		while True:
-			self.snd_msg(self.sens2.get_bearing())
+			self.snd_msg("Compass," + self.sens2.get_bearing())
 
 	def snd_msg(self, msg):
-		self.sc.send_data(msg)
+		self.sc.send_data("Sensor," + msg)
 
 	def spawn_threads(self):
 		t1 = threading.Thread(name="lidar", target=self.lidar)

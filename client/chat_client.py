@@ -33,7 +33,7 @@ class chat_client(object):
 						blconnected = False
 					else:
 						#print data
-						sys.stdout.write(data)
+						# sys.stdout.write(data)
 						th.msg_q.put(data)
 						# th.update_tele(data)
 

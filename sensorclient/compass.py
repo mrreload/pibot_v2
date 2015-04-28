@@ -44,5 +44,5 @@ class Compass(object):
 		if bearing < 0:
 			bearing += 2 * math.pi
 
-		print "Bearing: ", math.degrees(bearing)
+		# print "Bearing: ", math.degrees(bearing)
 		return math.degrees(bearing)
