@@ -105,5 +105,5 @@ class MessageServ(object):
 		elif data == "sweep":
 			print("Not implemented!")  #os._exit(0)
 		else:
-			print("What happened?")
+			print("What happened?", data)
 
