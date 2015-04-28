@@ -1,6 +1,7 @@
 # Save as server.py 
 # Message Receiver
 import os
+from Queue import Queue
 
 pt = __import__('pantilt')
 pc = __import__('picontrol')
@@ -19,6 +20,17 @@ class MessageServ(object):
 		self.tilt_move = 50
 		pt.pan(self.pan_def)
 		pt.tilt(self.tilt_def)
+		self.q = Queue()
+
+	def parse_msg(self, data):
+		self.q.put(data)
+		data_arry = data.split(',')
+		if data_arry[0] == "Command":
+			self.read_data(data_arry[1])
+		elif data_arry[0] == "Sensor":
+			print "Dod something here"
+		else:
+			print "Nothing to do"
 
 	def read_data(self, data):
 		data = data.strip()

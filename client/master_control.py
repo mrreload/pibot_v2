@@ -55,61 +55,13 @@ class Player(object):
 
 		# Create bus to get events from GStreamer pipeline
 		self.bus = self.pipeline.get_bus()
-		self.bus.add_signal_watch()
-		self.bus.connect('message::eos', self.on_eos)
-		self.bus.connect('message::error', self.on_error)
-
-		# This is needed to make the video output in our DrawingArea:
-		self.bus.enable_sync_message_emission()
-		self.bus.connect('sync-message::element', self.on_sync_message, self.window_id)
-
-		# Create GStreamer elements
-		tcpsrc = Gst.ElementFactory.make("tcpclientsrc", "source")
-		self.pipeline.add(tcpsrc)
-		tcpsrc.set_property("host", v_host)
-		tcpsrc.set_property("port", v_port)
-
-		gdpdepay = Gst.ElementFactory.make("gdpdepay", "gdpdepay")
-		self.pipeline.add(gdpdepay)
-		tcpsrc.link(gdpdepay)
-
-		rtph264depay = Gst.ElementFactory.make("rtph264depay", "rtph264depay")
-		self.pipeline.add(rtph264depay)
-		gdpdepay.link(rtph264depay)
-
-		h264parse = Gst.ElementFactory.make("h264parse", "h264parse")
-		self.pipeline.add(h264parse)
-		rtph264depay.link(h264parse)
-
-		if os.name == "posix":
-			vaapidecode = Gst.ElementFactory.make("vaapidecode", "vaapidecode")
-			self.pipeline.add(vaapidecode)
-			h264parse.link(vaapidecode)
-
-			vaapisink = Gst.ElementFactory.make("vaapisink", "vaapisink")
-			self.pipeline.add(vaapisink)
-			vaapisink.set_property("sync", "false")
-			vaapidecode.link(vaapisink)
-		else:
-			avdec_h264 = Gst.ElementFactory.make("avdec_h264", "avdec_h264")
-			self.pipeline.add(avdec_h264)
-			h264parse.link(avdec_h264)
-
-			videoconvert = Gst.ElementFactory.make("videoconvert", "videoconvert")
-			self.pipeline.add(videoconvert)
-			avdec_h264.link(videoconvert)
-
-			autovideosink = Gst.ElementFactory.make("autovideosink", "autovideosink")
-			self.pipeline.add(autovideosink)
-			autovideosink.set_property("sync", "false")
-			videoconvert.link(autovideosink)
+		self.setup_video()
 
 	def setup_key_binds(self):
 		keybindings = {}
 		execfile("keybindings.conf", keybindings)
 		for command, key in keybindings.iteritems():
 			if isinstance(key, str):
-				print(command, key)
 				self.videoframe.bind(key, lambda event, arg=command: self.keypress(event, arg))
 		self.videoframe.bind("<Button-1>", self.callback)
 
@@ -185,4 +137,53 @@ class Player(object):
 		print "Quitting"
 		self.window.quit()
 
-		#show_video()
+	def setup_video(self):
+
+		self.bus.add_signal_watch()
+		self.bus.connect('message::eos', self.on_eos)
+		self.bus.connect('message::error', self.on_error)
+
+		# This is needed to make the video output in our DrawingArea:
+		self.bus.enable_sync_message_emission()
+		self.bus.connect('sync-message::element', self.on_sync_message, self.window_id)
+
+		# Create GStreamer elements
+		tcpsrc = Gst.ElementFactory.make("tcpclientsrc", "source")
+		self.pipeline.add(tcpsrc)
+		tcpsrc.set_property("host", v_host)
+		tcpsrc.set_property("port", v_port)
+
+		gdpdepay = Gst.ElementFactory.make("gdpdepay", "gdpdepay")
+		self.pipeline.add(gdpdepay)
+		tcpsrc.link(gdpdepay)
+
+		rtph264depay = Gst.ElementFactory.make("rtph264depay", "rtph264depay")
+		self.pipeline.add(rtph264depay)
+		gdpdepay.link(rtph264depay)
+
+		h264parse = Gst.ElementFactory.make("h264parse", "h264parse")
+		self.pipeline.add(h264parse)
+		rtph264depay.link(h264parse)
+
+		if os.name == "posix":
+			vaapidecode = Gst.ElementFactory.make("vaapidecode", "vaapidecode")
+			self.pipeline.add(vaapidecode)
+			h264parse.link(vaapidecode)
+
+			vaapisink = Gst.ElementFactory.make("vaapisink", "vaapisink")
+			self.pipeline.add(vaapisink)
+			vaapisink.set_property("sync", "false")
+			vaapidecode.link(vaapisink)
+		else:
+			avdec_h264 = Gst.ElementFactory.make("avdec_h264", "avdec_h264")
+			self.pipeline.add(avdec_h264)
+			h264parse.link(avdec_h264)
+
+			videoconvert = Gst.ElementFactory.make("videoconvert", "videoconvert")
+			self.pipeline.add(videoconvert)
+			avdec_h264.link(videoconvert)
+
+			autovideosink = Gst.ElementFactory.make("autovideosink", "autovideosink")
+			self.pipeline.add(autovideosink)
+			autovideosink.set_property("sync", "false")
+			videoconvert.link(autovideosink)

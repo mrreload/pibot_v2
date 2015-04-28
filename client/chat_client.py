@@ -54,7 +54,8 @@ class chat_client(object):
 
 
 	def sendcommand(self, cmnd):
-		self.s.sendall(cmnd)
+		cmd = "Command," + cmnd
+		self.s.sendall(cmd)
 
 	def receivedata(self, msgq, sockm, pthr):
 		pthr.msg_q.put("Startup init")

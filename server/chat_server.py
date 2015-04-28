@@ -20,6 +20,7 @@ class msg_server(object):
 		# this has no effect, why ?
 		self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		self.srv_q = Queue.Queue(maxsize=0)
+		self.mserv = ms.MessageServ()
 
 	# Function to broadcast chat messages to all connected clients
 	def broadcast_data(self, message):
@@ -34,7 +35,7 @@ class msg_server(object):
 					self.CONNECTION_LIST.remove(socket)
 
 	def nothuman(self):
-		mserv = ms.MessageServ()
+
 
 		self.server_socket.bind(("0.0.0.0", self.PORT))
 		self.server_socket.listen(10)
@@ -65,7 +66,7 @@ class msg_server(object):
 						data = self.sock.recv(self.RECV_BUFFER)
 						if data:
 							#broadcast_data("\r" + '<' + str(sock.getpeername()) + '> ' + data)
-							mserv.read_data(data)
+							self.mserv.parse_msg(data)
 							self.srv_q.put(data)
 							self.broadcast_data(data)
 
