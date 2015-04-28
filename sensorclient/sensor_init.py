@@ -28,11 +28,11 @@ class SensorMain(object):
 
 	def lidar(self):
 		while True:
-			self.snd_msg("Lidar," + self.sens1.read_sensor())
+			self.snd_msg("Lidar," + str(self.sens1.read_sensor()))
 
 	def compass(self):
 		while True:
-			self.snd_msg("Compass," + self.sens2.get_bearing())
+			self.snd_msg("Compass," + str(self.sens2.get_bearing()))
 
 	def snd_msg(self, msg):
 		self.sc.send_data("Sensor," + msg)
