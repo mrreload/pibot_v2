@@ -9,7 +9,7 @@ ms = __import__('messageserv')
 class msg_server(object):
 	def __init__(self):
 		config = {}
-		execfile("/home/pi/pibot_v2/server.conf", config)
+		execfile("/home/pi/pibot_v2/server/server.conf", config)
 		v_port = config["vid_port"]
 		m_port = config["msg_port"]
 		# List to keep track of socket descriptors
