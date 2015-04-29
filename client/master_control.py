@@ -5,6 +5,7 @@ import time, Queue, threading, os
 import gi
 gi.require_version('Gst', '1.0')
 from gi.repository import Gst
+import ConfigParser
 
 # Needed for window.get_xid(), xvimagesink.set_window_handle(), respectively:
 # from gi.repository import GdkX11, GstVideo
@@ -22,12 +23,18 @@ def show_video():
 
 class Player(object):
 	def __init__(self):
-		config = {}
-		execfile("client.conf", config)
+		self.config = ConfigParser.ConfigParser()
+		#If the module is executed as a script __name__ will be '__main__' and sys.argv[0] will be the full path of the module.
+		if __name__ == '__main__':
+			path = os.path.split(sys.argv[0])[0]
+		#Else the module was imported and it has a __file__ attribute that will be the full path of the module.
+		else:
+			path = os.path.split(__file__)[0]
+		self.config.read(os.path.join(path, 'client.conf'))
 		global v_host
-		v_host = config["host"]
+		v_host = self.config.get("Connection", "host")
 		global v_port
-		v_port = config["video_port"]
+		v_port = self.config.get("Connection", "video_port")
 		self.msg_q = Queue.Queue(maxsize=0)
 		self.window = tk.Tk()
 		self.window.title("PiBot Control")
@@ -58,8 +65,7 @@ class Player(object):
 		self.setup_video()
 
 	def setup_key_binds(self):
-		keybindings = {}
-		execfile("keybindings.conf", keybindings)
+		keybindings = dict(self.config.items("KeyBindings"))
 		for command, key in keybindings.iteritems():
 			if isinstance(key, str):
 				self.videoframe.bind(key, lambda event, arg=command: self.keypress(event, arg))

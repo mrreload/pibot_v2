@@ -1,5 +1,5 @@
 __author__ = 'mrreload'
-
+import ConfigParser, os
 import socket, select, string, sys, threading, time
 import Queue
 mc = __import__('master_control')
@@ -7,10 +7,16 @@ mc = __import__('master_control')
 
 class chat_client(object):
 	def __init__(self):
-		config = {}
-		execfile("client.conf", config)
-		self.m_host = config["host"]
-		self.m_port = config["message_port"]
+		self.config = ConfigParser.ConfigParser()
+		#If the module is executed as a script __name__ will be '__main__' and sys.argv[0] will be the full path of the module.
+		if __name__ == '__main__':
+			path = os.path.split(sys.argv[0])[0]
+		#Else the module was imported and it has a __file__ attribute that will be the full path of the module.
+		else:
+			path = os.path.split(__file__)[0]
+		self.config.read(os.path.join(path, 'client.conf'))
+		self.m_host = self.config.get("Connection", "host")
+		self.m_port = self.config.get("Connection", "message_port")
 		self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		self.s.settimeout(2)
