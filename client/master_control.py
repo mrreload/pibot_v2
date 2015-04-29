@@ -34,7 +34,7 @@ class Player(object):
 		global v_host
 		v_host = self.config.get("Connection", "host")
 		global v_port
-		v_port = self.config.get("Connection", "video_port")
+		v_port = int(self.config.get("Connection", "video_port"))
 		self.msg_q = Queue.Queue(maxsize=0)
 		self.window = tk.Tk()
 		self.window.title("PiBot Control")
@@ -68,6 +68,7 @@ class Player(object):
 		keybindings = dict(self.config.items("KeyBindings"))
 		for command, key in keybindings.iteritems():
 			if isinstance(key, str):
+				print "Binding %s to %s" % (key, command)
 				self.videoframe.bind(key, lambda event, arg=command: self.keypress(event, arg))
 		self.videoframe.bind("<Button-1>", self.callback)
 

@@ -16,7 +16,7 @@ class chat_client(object):
 			path = os.path.split(__file__)[0]
 		self.config.read(os.path.join(path, 'client.conf'))
 		self.m_host = self.config.get("Connection", "host")
-		self.m_port = self.config.get("Connection", "message_port")
+		self.m_port = int(self.config.get("Connection", "message_port"))
 		self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		self.s.settimeout(2)
@@ -61,6 +61,7 @@ class chat_client(object):
 
 	def sendcommand(self, cmnd):
 		cmd = "Command," + cmnd
+		print cmd
 		self.s.sendall(cmd)
 
 	def receivedata(self, msgq, sockm, pthr):
