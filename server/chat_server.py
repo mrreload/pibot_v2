@@ -19,7 +19,7 @@ class msg_server(object):
 		self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		# this has no effect, why ?
 		self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-		self.srv_q = Queue.Queue(maxsize=0)
+		# self.srv_q = Queue.Queue(maxsize=0)
 		self.mserv = ms.MessageServ()
 
 	# Function to broadcast chat messages to all connected clients
@@ -28,15 +28,17 @@ class msg_server(object):
 		for socket in self.CONNECTION_LIST:
 			if socket != self.server_socket and socket != self.sock:
 				try:
-					socket.send(message)
+					msg = message.split(':')
+					for m in msg:
+						socket.send(m[0] + m[1])
+					# socket.send(message)
 				except:
 					# broken socket connection may be, chat client pressed ctrl+c for example
 					socket.close()
 					self.CONNECTION_LIST.remove(socket)
 
+
 	def nothuman(self):
-
-
 		self.server_socket.bind(("0.0.0.0", self.PORT))
 		self.server_socket.listen(10)
 		# Add server socket to the list of readable connections
