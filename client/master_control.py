@@ -31,7 +31,6 @@ class Player(object):
 		else:
 			path = os.path.split(__file__)[0]
 		self.config.read(os.path.join(os.path.dirname(path), 'client.conf'))
-		print self.config.sections()
 		if len(self.config.sections()) <= 0:
 			self.config.read(os.path.join(path, 'client.conf'))
 			with open(os.path.join(os.path.dirname(path), 'client.conf'), "w") as conf:
@@ -78,19 +77,40 @@ class Player(object):
 		self.setup_video()
 
 	def showConfig(self):
+		self.values = {}
 		self.configWindow = tk.Toplevel(self.window)
 		self.configWindow.title("Client Configuration")
-		self.hostLabel = tk.Label(self.configWindow, text="Host:")
-		self.hostLabel.pack(side="left", expand=True, padx=100, pady=100)
-		self.hostEntry = tk.Entry(self.configWindow)
-		self.hostEntry.insert(0, self.config.get("Connection", "Host"))
-		self.hostEntry.pack(side="right", expand=True, padx=100, pady=100)
+		self.configFrame = tk.Frame(self.configWindow)
+		rowindex = 0
+		for section in self.config.sections():
+			self.sectionLabel = {}
+			self.sectionLabel[section] = tk.Label(self.configFrame, text=section)
+			self.sectionLabel[section].grid(row=rowindex,column=0)
+			rowindex += 1
+			self.values[section] = dict(self.config.items(section))
+			for label, entry in self.values[section].iteritems():
+				self.values[section][label] = tk.StringVar()
+				self.values[section][label].set(entry)
+				self.valueLabel = {}
+				self.valueLabel[label] = tk.Label(self.configFrame, text=label)
+				self.valueLabel[label].grid(row=rowindex,column=0)
+				self.valueEntry = {}
+				self.valueEntry[label] = tk.Entry(self.configFrame, textvariable=self.values[section][label])
+				self.valueEntry[label].grid(row=rowindex,column=1)
+				rowindex += 1
+		self.configFrame.pack(padx=50, pady=50)
 		self.saveButton = tk.Button(self.configWindow, text="Save", command=self.saveConfig)
 		self.saveButton.pack(side="bottom")
 		self.configWindow.focus_set()
 
 	def saveConfig(self):
-		self.config.set("Connection", "Host", self.hostEntry.get())
+		if __name__ == '__main__':
+			path = os.path.split(sys.argv[0])[0]
+		else:
+			path = os.path.split(__file__)[0]
+		for section, value in self.values.iteritems():
+			for label, entry in value.iteritems():
+				self.config.set(section, label, self.values[section][label].get())
 		with open(os.path.join(os.path.dirname(path), 'client.conf'), "w") as conf:
 			self.config.write(conf)
 		print "Saved!"
