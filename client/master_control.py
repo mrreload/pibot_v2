@@ -74,8 +74,20 @@ class Player(object):
 	def showConfig(self):
 		self.configWindow = tk.Toplevel(self.window)
 		self.configWindow.title("Client Configuration")
-		l = tk.Label(self.configWindow, text="TEST")
-		l.pack(side="top", fill="both", expand=True, padx=100, pady=100)
+		self.hostLabel = tk.Label(self.configWindow, text="Host:")
+		self.hostLabel.pack(side="left", expand=True, padx=100, pady=100)
+		self.hostEntry = tk.Entry(self.configWindow)
+		self.hostEntry.insert(0, self.config.get("Connection", "Host"))
+		self.hostEntry.pack(side="right", expand=True, padx=100, pady=100)
+		self.saveButton = tk.Button(self.configWindow, text="Save", command=self.saveConfig)
+		self.saveButton.pack(side="bottom")
+		self.configWindow.focus_set()
+
+	def saveConfig(self):
+		self.config.set("Connection", "Host", self.hostEntry.get())
+		with open("client.conf", "w") as conf:
+			self.config.write(conf)
+		print "Saved!"
 
 	def setup_key_binds(self):
 		keybindings = dict(self.config.items("KeyBindings"))
