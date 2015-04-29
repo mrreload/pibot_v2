@@ -30,7 +30,13 @@ class Player(object):
 		#Else the module was imported and it has a __file__ attribute that will be the full path of the module.
 		else:
 			path = os.path.split(__file__)[0]
-		self.config.read(os.path.join(path, 'client.conf'))
+		self.config.read(os.path.join(os.path.dirname(path), 'client.conf'))
+		print self.config.sections()
+		if len(self.config.sections()) <= 0:
+			self.config.read(os.path.join(path, 'client.conf'))
+			with open(os.path.join(os.path.dirname(path), 'client.conf'), "w") as conf:
+				self.config.write(conf)
+
 		global v_host
 		v_host = self.config.get("Connection", "host")
 		global v_port
@@ -85,7 +91,7 @@ class Player(object):
 
 	def saveConfig(self):
 		self.config.set("Connection", "Host", self.hostEntry.get())
-		with open("client.conf", "w") as conf:
+		with open(os.path.join(os.path.dirname(path), 'client.conf'), "w") as conf:
 			self.config.write(conf)
 		print "Saved!"
 
