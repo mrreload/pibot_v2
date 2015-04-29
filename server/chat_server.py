@@ -54,8 +54,8 @@ class msg_server(object):
 					# Handle the case in which there is a new connection received through server_socket
 					sockfd, addr = self.server_socket.accept()
 					self.CONNECTION_LIST.append(sockfd)
-					print "Client (%s, %s) connected" % addr
-					self.broadcast_data("[%s:%s] Connected to Johnny .5\n" % addr)
+					print "Client (%s) connected" % addr
+					self.broadcast_data("[%s] Connected to Johnny .5\n" % addr)
 
 				# Some incoming message from a client
 				else:
@@ -72,8 +72,8 @@ class msg_server(object):
 
 					except:
 						print "Unexpected error:", sys.exc_info()[0]
-						self.broadcast_data("Client (%s, %s) is offline" % addr)
-						print "Client (%s, %s) is offline" % addr
+						self.broadcast_data("Client (%s) is offline" % addr)
+						print "Client (%s) is offline" % addr
 						self.sock.close()
 						self.CONNECTION_LIST.remove(self.sock)
 						continue

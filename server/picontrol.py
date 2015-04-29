@@ -9,7 +9,7 @@ import os
 import pygame
 
 #os.environ['SDL_VIDEODRIVER'] = 'dummy'
-pygame.init()
+#pygame.init()
 #screen = pygame.display.set_mode((100,100))
 #clock = pygame.time.Clock()
 #window = curses.initscr()
@@ -119,37 +119,37 @@ def turnOffMotors():
 
 atexit.register(turnOffMotors)
 
-def main():
-    while stop == 1:
-    	pygame.event.pump()
-    	for event in pygame.event.get():
-        	if event.type == pygame.QUIT:
-            		crashed = True
-
-        ############################
-        	if event.type == pygame.KEYDOWN:
-            		if event.key == pygame.K_LEFT:
-                		print "Left!"
-				go_left()
-	    		elif event.key == pygame.K_RIGHT:
-                		print "Right!"
-				go_right()
-	    		elif event.key == pygame.K_UP:
-				print "Forward!"
-				go_forward()
-	    		elif event.key == pygame.K_DOWN:
-				print "Back!"
-				go_backward()
-	    		elif event.key == pygame.K_SPACE:
-				print "Stop!"
-				do_stop()
-	    		elif event.key == pygame.K_ESCAPE:
-				print "Exit!"
-				pygame.quit()
-				quit()
-        	elif event.type == pygame.KEYUP:
-            		if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT or event.key == pygame.K_UP or event.key == pygame.K_DOWN or event.key == pygame.K_SPACE or event.key == pygame.K_ESCAPE:
-                		print "Key released!"
+# def main():
+#     while stop == 1:
+#     	pygame.event.pump()
+#     	for event in pygame.event.get():
+#         	if event.type == pygame.QUIT:
+#             		crashed = True
+#
+#         ############################
+#         	if event.type == pygame.KEYDOWN:
+#             		if event.key == pygame.K_LEFT:
+#                 		print "Left!"
+# 				go_left()
+# 	    		elif event.key == pygame.K_RIGHT:
+#                 		print "Right!"
+# 				go_right()
+# 	    		elif event.key == pygame.K_UP:
+# 				print "Forward!"
+# 				go_forward()
+# 	    		elif event.key == pygame.K_DOWN:
+# 				print "Back!"
+# 				go_backward()
+# 	    		elif event.key == pygame.K_SPACE:
+# 				print "Stop!"
+# 				do_stop()
+# 	    		elif event.key == pygame.K_ESCAPE:
+# 				print "Exit!"
+# 				pygame.quit()
+# 				quit()
+#         	elif event.type == pygame.KEYUP:
+#             		if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT or event.key == pygame.K_UP or event.key == pygame.K_DOWN or event.key == pygame.K_SPACE or event.key == pygame.K_ESCAPE:
+#                 		print "Key released!"
         ######################
     ##
     
@@ -187,6 +187,6 @@ def main():
 
 
 #print(str(ch))
-    pygame.exit()
-    exit()
+    #pygame.exit()
+    #exit()
 

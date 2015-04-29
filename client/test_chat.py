@@ -4,8 +4,8 @@ import socket, select, string, sys
 import traceback, time
 
 def prompt() :
-    sys.stdout.write('<You> ')
-    sys.stdout.flush()
+	sys.stdout.write('<You> ')
+	sys.stdout.flush()
 
 def connecttoserver():
 		try:
