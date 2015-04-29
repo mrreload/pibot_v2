@@ -56,7 +56,7 @@ class msg_server(object):
 					# Handle the case in which there is a new connection received through server_socket
 					sockfd, addr = self.server_socket.accept()
 					self.CONNECTION_LIST.append(sockfd)
-					print "Client (%s) connected" % addr
+					# print "Client (%s) connected" % addr
 					self.broadcast_data("[%s] Connected to Johnny .5\n" % addr)
 
 				# Some incoming message from a client
