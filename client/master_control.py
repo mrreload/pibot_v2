@@ -41,6 +41,13 @@ class Player(object):
 		self.window.geometry('1280x740')
 		self.window.protocol("WM_DELETE_WINDOW", self.exithandler)
 		self.videoframe = tk.Frame(self.window, width=1280, height=720)
+		self.menubar = tk.Menu(self.window)
+		self.window.config(menu=self.menubar)
+		self.fileMenu = tk.Menu(self.menubar)
+		self.fileMenu.add_command(label="Configuration...", command=self.showConfig)
+		self.fileMenu.add_separator()
+		self.fileMenu.add_command(label="Exit", command=self.window.quit)
+		self.menubar.add_cascade(label="File", menu=self.fileMenu)
 
 		# Keyboard bindings
 		self.setup_key_binds()
@@ -63,6 +70,12 @@ class Player(object):
 		# Create bus to get events from GStreamer pipeline
 		self.bus = self.pipeline.get_bus()
 		self.setup_video()
+
+	def showConfig(self):
+		self.configWindow = tk.Toplevel(self.window)
+		self.configWindow.title("Client Configuration")
+		l = tk.Label(self.configWindow, text="TEST")
+		l.pack(side="top", fill="both", expand=True, padx=100, pady=100)
 
 	def setup_key_binds(self):
 		keybindings = dict(self.config.items("KeyBindings"))
