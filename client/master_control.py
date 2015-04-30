@@ -36,27 +36,11 @@ class Player(object):
 		global v_port
 		v_port = int(self.config.get("Connection", "video_port"))
 		self.msg_q = Queue.Queue(maxsize=0)
-		self.window = tk.Tk()
-		self.window.title("PiBot Control")
-		self.window.geometry('1280x740')
-		self.window.protocol("WM_DELETE_WINDOW", self.exithandler)
-		self.videoframe = tk.Frame(self.window, width=1280, height=720)
-		self.menubar = tk.Menu(self.window)
-		self.window.config(menu=self.menubar)
-		self.fileMenu = tk.Menu(self.menubar)
-		self.fileMenu.add_command(label="Configuration...", command=self.showConfig)
-		self.fileMenu.add_separator()
-		self.fileMenu.add_command(label="Exit", command=self.window.quit)
-		self.menubar.add_cascade(label="File", menu=self.fileMenu)
+
+		self.showWindow()
 
 		# Keyboard bindings
 		self.setup_key_binds()
-		self.telemetry = tk.Label(self.window, text="Hello, world!", font=("Arial", 12), bg='black', fg="white")
-
-		self.telemetry.place(relwidth=1, height=20)
-		self.videoframe.pack(side=tk.BOTTOM, anchor=tk.S, expand=tk.YES, fill=tk.BOTH)
-		self.window.focus_set()
-		self.window_id = self.videoframe.winfo_id()
 
 		# Setup Messaging Connection
 		self.chat = ch.chat_client()
@@ -70,6 +54,42 @@ class Player(object):
 
 		# Create bus to get events from GStreamer pipeline
 		self.bus = self.pipeline.get_bus()
+
+	def showWindow(self):
+		#setup main client gui
+		self.window = tk.Tk()
+		self.window.title("PiBot Control")
+		self.window.geometry('1280x740')
+		self.window.protocol("WM_DELETE_WINDOW", self.exithandler)
+		#add frames for display
+		self.labelFrame = tk.Frame(self.window, height=20, width=1280)
+		self.labelFrame.pack(side=tk.TOP, expand=tk.NO, fill=tk.X, anchor=tk.N)
+		self.labelFrame.columnconfigure(0, weight=1)
+		self.labelFrame.columnconfigure(1, weight=1)
+		self.labelFrame.columnconfigure(2, weight=1)
+		self.labelFrame.columnconfigure(3, weight=1)
+		self.videoframe = tk.Frame(self.window, width=1280, height=720)
+		self.videoframe.pack(side=tk.BOTTOM, anchor=tk.S, expand=tk.YES, fill=tk.BOTH)
+		#add menu to gui
+		self.menubar = tk.Menu(self.window)
+		self.window.config(menu=self.menubar)
+		self.fileMenu = tk.Menu(self.menubar)
+		self.fileMenu.add_command(label="Configuration...", command=self.showConfig)
+		self.fileMenu.add_separator()
+		self.fileMenu.add_command(label="Exit", command=self.window.quit)
+		self.menubar.add_cascade(label="File", menu=self.fileMenu)
+		#add labels to top frame
+		self.commandLabel = tk.Label(self.labelFrame, text="Command!", font=("Arial", 12), bg='black', fg="white")
+		self.commandLabel.grid(sticky=tk.E+tk.W, row=0, column=0)
+		self.compassLabel = tk.Label(self.labelFrame, text="Compass!", font=("Arial", 12), bg='black', fg="white")
+		self.compassLabel.grid(sticky=tk.E+tk.W, row=0, column=1)
+		self.lidarLabel = tk.Label(self.labelFrame, text="Lidar!", font=("Arial", 12), bg='black', fg="white")
+		self.lidarLabel.grid(sticky=tk.E+tk.W, row=0, column=2)
+		self.gpsLabel = tk.Label(self.labelFrame, text="GPS!", font=("Arial", 12), bg='black', fg="white")
+		self.gpsLabel.grid(sticky=tk.E+tk.W, row=0, column=3)
+		#set focus to client window
+		self.window.focus_set()
+		self.window_id = self.videoframe.winfo_id()
 
 	def showConfig(self):
 		self.values = {}
@@ -123,8 +143,8 @@ class Player(object):
 		print "clicked at", event.x, event.y
 
 	def keypress(self, event, command):
-		self.telemetry.config(text=command)
-		self.telemetry.update_idletasks()
+		self.commandLabel.config(text=command)
+		self.commandLabel.update_idletasks()
 		self.chat.sendcommand(command)
 
 	def run(self):
@@ -162,15 +182,15 @@ class Player(object):
 		print('on_error():', msg.parse_error())
 
 	def update_tele(self, servertext):
-		self.telemetry.config(text=servertext)
-		self.telemetry.update_idletasks()
+		self.commandLabel.config(text=servertext)
+		self.commandLabel.update_idletasks()
 
 	def update_tele2(self):
 		if not self.msg_q.empty():
 			servertext = self.msg_q.get_nowait()
-			self.telemetry.config(text=servertext)
-			self.telemetry.update_idletasks()
-		self.telemetry.after(100, self.update_tele2)
+			self.commandLabel.config(text=servertext)
+			self.commandLabel.update_idletasks()
+		self.commandLabel.after(100, self.update_tele2)
 
 
 	def exithandler(self):
