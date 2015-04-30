@@ -32,6 +32,7 @@ class Player(object):
 			path = os.path.split(__file__)[0]
 		self.config.read(os.path.join(os.path.dirname(path), 'client.conf'))
 		if len(self.config.sections()) <= 0:
+			print "Config file not present, copying default"
 			self.config.read(os.path.join(path, 'client.conf'))
 			with open(os.path.join(os.path.dirname(path), 'client.conf'), "w") as conf:
 				self.config.write(conf)
@@ -123,7 +124,6 @@ class Player(object):
 				self.videoframe.bind(key, lambda event, arg=command: self.keypress(event, arg))
 		self.videoframe.bind("<Button-1>", self.callback)
 
-
 	def callback(self, event):
 		self.videoframe.focus_set()
 		print "clicked at", event.x, event.y
@@ -141,7 +141,6 @@ class Player(object):
 		self.window.mainloop()
 
 	def quit(self, window):
-
 		self.pipeline.set_state(Gst.State.NULL)
 		self.window.destroy()
 
