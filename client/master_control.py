@@ -1,7 +1,7 @@
 __author__ = 'mrreload'
 import Tkinter as tk
 ch = __import__('chat_client')
-import time, Queue, threading, os
+import time, Queue, threading, os, sys
 import gi
 gi.require_version('Gst', '1.0')
 from gi.repository import Gst
@@ -14,12 +14,6 @@ from gi.repository import GdkX11, GstVideo
 # GObject.threads_init()
 Gst.init(None)
 Empty = Queue.Empty
-
-
-def show_video():
-	p = Player()
-	p.run()
-
 
 class Player(object):
 	def __init__(self):
@@ -61,6 +55,7 @@ class Player(object):
 
 		self.telemetry.place(relwidth=1, height=20)
 		self.videoframe.pack(side=tk.BOTTOM, anchor=tk.S, expand=tk.YES, fill=tk.BOTH)
+		self.window.focus_set()
 		self.window_id = self.videoframe.winfo_id()
 
 		# Setup Messaging Connection
@@ -75,7 +70,6 @@ class Player(object):
 
 		# Create bus to get events from GStreamer pipeline
 		self.bus = self.pipeline.get_bus()
-
 
 	def showConfig(self):
 		self.values = {}
@@ -195,7 +189,6 @@ class Player(object):
 		self.window.quit()
 
 	def setup_video(self):
-
 		self.bus.add_signal_watch()
 		self.bus.connect('message::eos', self.on_eos)
 		self.bus.connect('message::error', self.on_error)
@@ -244,3 +237,6 @@ class Player(object):
 			self.pipeline.add(autovideosink)
 			autovideosink.set_property("sync", "false")
 			videoconvert.link(autovideosink)
+
+if __name__ == "__main__":
+	Player().run()
