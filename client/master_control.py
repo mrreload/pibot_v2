@@ -75,7 +75,7 @@ class Player(object):
 
 		# Create bus to get events from GStreamer pipeline
 		self.bus = self.pipeline.get_bus()
-		self.setup_video()
+
 
 	def showConfig(self):
 		self.values = {}
@@ -134,7 +134,7 @@ class Player(object):
 		self.chat.sendcommand(command)
 
 	def run(self):
-		#self.send_q.put("Hello")
+		self.setup_video()
 		# Start the Gstreamer pipeline
 		self.pipeline.set_state(Gst.State.PLAYING)
 		# Open the Tk window

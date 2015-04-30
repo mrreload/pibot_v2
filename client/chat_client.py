@@ -1,5 +1,5 @@
 __author__ = 'mrreload'
-import ConfigParser, os
+import ConfigParser, os, traceback
 import socket, select, string, sys, threading, time
 import Queue
 mc = __import__('master_control')
@@ -66,9 +66,10 @@ class chat_client(object):
 
 
 	def sendcommand(self, cmnd):
-		cmd = "Command," + cmnd
-		print cmd
-		self.s.send(cmd)
+		try:
+			self.s.sendall(cmnd)
+		except Exception:
+			traceback.print_exc(file=sys.stdout)
 
 	def receivedata(self, msgq, sockm, pthr):
 		pthr.msg_q.put("Startup init")

@@ -28,10 +28,10 @@ class msg_server(object):
 		for socket in self.CONNECTION_LIST:
 			if socket != self.server_socket and socket != self.sock:
 				try:
-					msg = message.split(':')
-					for m in msg:
-						socket.send(m[0] + m[1])
-					# socket.send(message)
+					# msg = message.split(':')
+					# for m in msg:
+					# 	socket.send(m[0] + m[1])
+					socket.send(message)
 				except:
 					# broken socket connection may be, chat client pressed ctrl+c for example
 					socket.close()
@@ -68,7 +68,7 @@ class msg_server(object):
 						data = self.sock.recv(self.RECV_BUFFER)
 						if data:
 							#broadcast_data("\r" + '<' + str(sock.getpeername()) + '> ' + data)
-							self.mserv.parse_msg(data)
+							self.mserv.read_data(data)
 							self.srv_q.put(data)
 							self.broadcast_data(data)
 

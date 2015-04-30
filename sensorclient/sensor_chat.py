@@ -55,7 +55,7 @@ class sensor_chat(object):
 
 	def send_data(self, cmnd):
 		print("Sending Message: " + str(cmnd))
-		self.s.sendall("Sensor," + str(cmnd) + ":")
+		self.s.sendall("Sensor," + str(cmnd))
 
 	def receivedata(self, msgq, sockm, pthr):
 		pthr.msg_q.put("Startup init")
