@@ -59,17 +59,30 @@ class Player(object):
 		#setup main client gui
 		self.window = tk.Tk()
 		self.window.title("PiBot Control")
-		self.window.geometry('1280x740')
+		self.window.geometry('1280x590')
 		self.window.protocol("WM_DELETE_WINDOW", self.exithandler)
+		self.window.configure(background="black")
+		#configure grid
+		self.window.columnconfigure(0, weight=1)
+		self.window.columnconfigure(1, weight=1)
+		self.window.columnconfigure(2, weight=1)
+		self.window.columnconfigure(3, weight=12)
+		self.window.rowconfigure(0, weight=10)
+		self.window.rowconfigure(1, weight=31)
+		self.window.rowconfigure(2, weight=1)
 		#add frames for display
-		self.labelFrame = tk.Frame(self.window, height=20, width=1280)
-		self.labelFrame.pack(side=tk.TOP, expand=tk.NO, fill=tk.X, anchor=tk.N)
-		self.labelFrame.columnconfigure(0, weight=1)
-		self.labelFrame.columnconfigure(1, weight=1)
-		self.labelFrame.columnconfigure(2, weight=1)
-		self.labelFrame.columnconfigure(3, weight=1)
-		self.videoframe = tk.Frame(self.window, width=1280, height=720)
-		self.videoframe.pack(side=tk.BOTTOM, anchor=tk.S, expand=tk.YES, fill=tk.BOTH)
+		self.compassFrame = tk.Frame(self.window, background="black")
+		self.compassFrame.grid(row=0,column=0, sticky="nsew", padx=1, pady=1)
+		self.lidarFrame = tk.Frame(self.window, background="black")
+		self.lidarFrame.grid(row=0,column=1, sticky="nsew", padx=1, pady=1)
+		self.gpsFrame = tk.Frame(self.window, background="black")
+		self.gpsFrame.grid(row=0,column=2, sticky="nsew", padx=1, pady=1)
+		self.mapFrame = tk.Frame(self.window, background="black")
+		self.mapFrame.grid(row=1,column=0,columnspan=3, sticky="nsew", padx=1, pady=1)
+		self.videoFrame = tk.Frame(self.window)
+		self.videoFrame.grid(row=0,column=3,rowspan=2, sticky="nsew", padx=1, pady=1)
+		self.statusFrame = tk.Frame(self.window, background="black")
+		self.statusFrame.grid(row=2,column=0,columnspan=4, sticky="nsew", padx=1, pady=1)
 		#add menu to gui
 		self.menubar = tk.Menu(self.window)
 		self.window.config(menu=self.menubar)
@@ -78,18 +91,27 @@ class Player(object):
 		self.fileMenu.add_separator()
 		self.fileMenu.add_command(label="Exit", command=self.window.quit)
 		self.menubar.add_cascade(label="File", menu=self.fileMenu)
-		#add labels to top frame
-		self.commandLabel = tk.Label(self.labelFrame, text="Command!", font=("Arial", 12), bg='black', fg="white")
-		self.commandLabel.grid(sticky=tk.E+tk.W, row=0, column=0)
-		self.compassLabel = tk.Label(self.labelFrame, text="Compass!", font=("Arial", 12), bg='black', fg="white")
-		self.compassLabel.grid(sticky=tk.E+tk.W, row=0, column=1)
-		self.lidarLabel = tk.Label(self.labelFrame, text="Lidar!", font=("Arial", 12), bg='black', fg="white")
-		self.lidarLabel.grid(sticky=tk.E+tk.W, row=0, column=2)
-		self.gpsLabel = tk.Label(self.labelFrame, text="GPS!", font=("Arial", 12), bg='black', fg="white")
-		self.gpsLabel.grid(sticky=tk.E+tk.W, row=0, column=3)
-		#set focus to client window
+		#initialize variables to update labels directly
+		self.compassValue = tk.StringVar()
+		self.compassValue.set("Compass!")
+		self.lidarValue = tk.StringVar()
+		self.lidarValue.set("Lidar!")
+		self.gpsValue = tk.StringVar()
+		self.gpsValue.set("GPS!")
+		self.statusValue = tk.StringVar()
+		self.statusValue.set("Command!")
+		#add labels to frames
+		self.compassLabel = tk.Label(self.compassFrame, textvariable=self.compassValue)
+		self.compassLabel.pack(expand=tk.YES, fill=tk.BOTH)
+		self.lidarLabel = tk.Label(self.lidarFrame, textvariable=self.lidarValue)
+		self.lidarLabel.pack(expand=tk.YES, fill=tk.BOTH)
+		self.gpsLabel = tk.Label(self.gpsFrame, textvariable=self.gpsValue)
+		self.gpsLabel.pack(expand=tk.YES, fill=tk.BOTH)
+		self.statusLabel = tk.Label(self.statusFrame, textvariable=self.statusValue)
+		self.statusLabel.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.BOTH)
+		#set focus to video frame
 		self.window.focus_set()
-		self.window_id = self.videoframe.winfo_id()
+
 
 	def showConfig(self):
 		self.values = {}
@@ -135,16 +157,15 @@ class Player(object):
 		for command, key in keybindings.iteritems():
 			if isinstance(key, str):
 				print "Binding %s to %s" % (key, command)
-				self.videoframe.bind(key, lambda event, arg=command: self.keypress(event, arg))
-		self.videoframe.bind("<Button-1>", self.callback)
+				self.window.bind(key, lambda event, arg=command: self.keypress(event, arg))
+		self.window.bind("<Button-1>", self.callback)
 
 	def callback(self, event):
-		self.videoframe.focus_set()
+		self.window.focus_set()
 		print "clicked at", event.x, event.y
 
 	def keypress(self, event, command):
-		self.commandLabel.config(text=command)
-		self.commandLabel.update_idletasks()
+		self.statusValue.set(command)
 		self.chat.sendcommand(command)
 
 	def run(self):
@@ -182,15 +203,13 @@ class Player(object):
 		print('on_error():', msg.parse_error())
 
 	def update_tele(self, servertext):
-		self.commandLabel.config(text=servertext)
-		self.commandLabel.update_idletasks()
+		self.statusValue.set(servertext)
 
 	def update_tele2(self):
 		if not self.msg_q.empty():
 			servertext = self.msg_q.get_nowait()
-			self.commandLabel.config(text=servertext)
-			self.commandLabel.update_idletasks()
-		self.commandLabel.after(100, self.update_tele2)
+			self.statusValue.set(servertext)
+		#self.statusValue.after(100, self.update_tele2)
 
 
 	def exithandler(self):
@@ -215,7 +234,7 @@ class Player(object):
 
 		# This is needed to make the video output in our DrawingArea:
 		self.bus.enable_sync_message_emission()
-		self.bus.connect('sync-message::element', self.on_sync_message, self.window_id)
+		self.bus.connect('sync-message::element', self.on_sync_message, self.videoFrame.winfo_id())
 
 		# Create GStreamer elements
 		tcpsrc = Gst.ElementFactory.make("tcpclientsrc", "source")
