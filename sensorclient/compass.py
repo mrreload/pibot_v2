@@ -6,8 +6,8 @@ import math
 
 
 class Compass(object):
-	x_offset = 50
-	y_offset = 200
+	x_offset = -9
+	y_offset = -139
 	scale = 0.92
 	bus = smbus.SMBus(1)
 	address = 0x1e
