@@ -68,9 +68,9 @@ class msg_server(object):
 						data = self.sock.recv(self.RECV_BUFFER)
 						if data:
 							#broadcast_data("\r" + '<' + str(sock.getpeername()) + '> ' + data)
-							self.mserv.read_data(data)
+							self.mserv.parse_msg(data)
 							self.srv_q.put(data)
-							self.broadcast_data(data)
+							# self.broadcast_data(data)
 
 					except:
 						# print "Unexpected error:", sys.exc_info()[0]
