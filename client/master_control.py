@@ -6,6 +6,7 @@ import gi
 gi.require_version('Gst', '1.0')
 from gi.repository import Gst
 import ConfigParser
+import geo
 
 # Needed for window.get_xid(), xvimagesink.set_window_handle(), respectively:
 # from gi.repository import GdkX11, GstVideo
@@ -32,6 +33,13 @@ class Player(object):
 			self.config.read(os.path.join(path, 'client.conf'))
 			with open(os.path.join(os.path.dirname(path), 'client.conf'), "w") as conf:
 				self.config.write(conf)
+		my_lon = 33.6880290
+		my_lat = 117.9861210
+		hb = geo.xyz(my_lat, my_lon)
+		la = geo.xyz(34.0522340, -118.2436850)
+		true_north = geo.great_circle_angle(hb, la, geo.geographic_northpole)
+		print "True North " + str(true_north)
+
 
 	def do_real_init(self):
 		global v_host
@@ -291,7 +299,7 @@ class Player(object):
 	def blitmsg(self, mq):
 
 		while True:
-			print "Outer Loop"
+			# print "Outer Loop"
 			while not mq.empty():
 				print "getting data from Q"
 				time.sleep(.1)
@@ -304,10 +312,10 @@ class Player(object):
 						if sn[1] == "Lidar":
 							self.lidarValue.set(sn[2])
 						if sn[1] == "Compass":
-							self.compassValue.set(sn[2])
+							self.compassValue.set(geo.direction_name(float(sn[2])))
 						if sn[1] == "GPS":
 							self.gpsValue.set(sn[2])
-			time.sleep(2)
+			time.sleep(.5)
 
 
 if __name__ == "__main__":
