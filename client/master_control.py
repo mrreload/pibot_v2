@@ -297,8 +297,16 @@ class Player(object):
 				time.sleep(.1)
 				dmsg = mq.get()
 				print("Queue data: " + dmsg)
-				self.compassValue.set(dmsg)
-
+				tm_arry = dmsg.split(';')
+				for cmd in tm_arry():
+					sn = cmd.split(',')
+					if sn[0] == "Sensor":
+						if sn[1] == "Lidar":
+							self.lidarValue.set(sn[2])
+						if sn[1] == "Compass":
+							self.compassValue.set(sn[2])
+						if sn[1] == "GPS":
+							self.gpsValue.set(sn[2])
 			time.sleep(2)
 
 
@@ -307,7 +315,4 @@ if __name__ == "__main__":
 	p.do_real_init()
 	p.run()
 
-
-def compass_update(data):
-	compassValue.set(data)
 

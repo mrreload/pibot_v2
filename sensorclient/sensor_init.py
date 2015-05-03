@@ -35,7 +35,7 @@ class SensorMain(object):
 			self.snd_msg("Compass," + str(self.sens2.get_bearing()))
 
 	def snd_msg(self, msg):
-		self.sc.send_data("Sensor," + msg)
+		self.sc.send_data("Sensor," + msg + ";")
 
 	def spawn_threads(self):
 		t1 = threading.Thread(name="lidar", target=self.lidar)

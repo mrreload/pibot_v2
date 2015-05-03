@@ -90,13 +90,15 @@ class msg_server(object):
 
 	def parse_msg(self, data):
 		# self.q.put(data)
-		data_arry = data.split(',')
-		if data_arry[0] == "Command":
-			self.mserv.read_command(data_arry[1])
-		elif data_arry[0] == "Sensor":
-			self.broadcast_data(data)
-		else:
-			print "Nothing to do"
+		cmd_arry = data.split(';')
+		for cmd in cmd_arry():
+			data_arry = cmd.split(',')
+			if data_arry[0] == "Command":
+				self.mserv.read_command(data_arry[1])
+			elif data_arry[0] == "Sensor":
+				self.broadcast_data(cmd + ";")
+			else:
+				print "Nothing to do"
 
 if __name__ == "__main__":
 	m = msg_server()

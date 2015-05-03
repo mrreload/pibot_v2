@@ -68,15 +68,15 @@ class chat_client(object):
 
 	def sendcommand(self, cmnd):
 		if cmnd.startswith("stop"):
-			cmd = "Command,stop"
+			cmd = "Command,stop;"
 		else:
-			cmd = "Command," + cmnd
+			cmd = "Command," + cmnd + ";"
 		try:
 			self.s.sendall(cmd)
 		except Exception:
 			traceback.print_exc(file=sys.stdout)
-			self.connecttoserver()
-			self.s.sendall(cmnd)
+			# self.connecttoserver()
+			# self.s.sendall(cmnd)
 
 	def receivedata(self, msgq, sockm, pthr):
 		pthr.msg_q.put("Startup init")
