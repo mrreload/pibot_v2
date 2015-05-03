@@ -46,8 +46,8 @@ class chat_client(object):
 						blconnected = False
 					else:
 						#print data
-						# sys.stdout.write(data)
-						th.msg_q.put(data)
+						sys.stdout.write(data)
+						mq.put(data)
 						# th.update_tele(data)
 
 					# self.prompt()
@@ -67,8 +67,12 @@ class chat_client(object):
 
 
 	def sendcommand(self, cmnd):
+		if cmnd.startswith("stop"):
+			cmd = "Command,stop"
+		else:
+			cmd = "Command," + cmnd
 		try:
-			self.s.sendall(cmnd)
+			self.s.sendall(cmd)
 		except Exception:
 			traceback.print_exc(file=sys.stdout)
 			self.connecttoserver()
@@ -76,28 +80,13 @@ class chat_client(object):
 
 	def receivedata(self, msgq, sockm, pthr):
 		pthr.msg_q.put("Startup init")
-		worker1 = threading.Thread(name="msgworker", target=self.listenmsg, args=(msgq, sockm, pthr))
+		worker1 = threading.Thread(name="msgworker", target=self.listenmsg, args=(pthr.msg_q, self.s, pthr))
 		worker1.setDaemon(True)
 		worker1.start()
 		# master = mc.Player()
 		time.sleep(.5)
 
-	def screen_thread(self, msgq, pthr):
-		worker2 = threading.Thread(name="msgblitter", target=self.blitmsg, args=(msgq, pthr))
-		worker2.setDaemon(True)
-		worker2.start()
 
-	def blitmsg(self, msg_Q, vth):
-		while True:
-			# print "Outer Loop"
-			while not msg_Q.empty():
-				print "getting data from Q"
-				time.sleep(1)
-				dmsg = msg_Q.get()
-				print("Queue data: " + dmsg)
-				vth.update_tele(dmsg)
-
-			time.sleep(2)
 
 
 

@@ -19,7 +19,7 @@ class msg_server(object):
 		self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		# this has no effect, why ?
 		self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-		# self.srv_q = Queue.Queue(maxsize=0)
+		self.srv_q = Queue.Queue(maxsize=0)
 		self.mserv = ms.MessageServ()
 
 	# Function to broadcast chat messages to all connected clients
@@ -68,7 +68,7 @@ class msg_server(object):
 						data = self.sock.recv(self.RECV_BUFFER)
 						if data:
 							#broadcast_data("\r" + '<' + str(sock.getpeername()) + '> ' + data)
-							self.mserv.parse_msg(data)
+							self.parse_msg(data)
 							self.srv_q.put(data)
 							# self.broadcast_data(data)
 
@@ -87,6 +87,16 @@ class msg_server(object):
 			dmsg = srv_q.get()
 			print("Queue data: " + dmsg)
 			self.broadcast_data(dmsg)
+
+	def parse_msg(self, data):
+		# self.q.put(data)
+		data_arry = data.split(',')
+		if data_arry[0] == "Command":
+			self.mserv.read_command(data_arry[1])
+		elif data_arry[0] == "Sensor":
+			self.broadcast_data(data)
+		else:
+			print "Nothing to do"
 
 if __name__ == "__main__":
 	m = msg_server()

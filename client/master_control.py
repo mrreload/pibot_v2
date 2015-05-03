@@ -15,7 +15,9 @@ from gi.repository import GdkX11, GstVideo
 Gst.init(None)
 Empty = Queue.Empty
 
+
 class Player(object):
+
 	def __init__(self):
 		self.config = ConfigParser.ConfigParser()
 		#If the module is executed as a script __name__ will be '__main__' and sys.argv[0] will be the full path of the module.
@@ -31,6 +33,7 @@ class Player(object):
 			with open(os.path.join(os.path.dirname(path), 'client.conf'), "w") as conf:
 				self.config.write(conf)
 
+	def do_real_init(self):
 		global v_host
 		v_host = self.config.get("Connection", "host")
 		global v_port
@@ -48,6 +51,7 @@ class Player(object):
 		self.chat.receivedata(self.msg_q, self.chat.s, self)
 		self.msg_q.put("Waiting for messages!")
 		self.update_tele2()
+		self.screen_thread()
 
 		# Create GStreamer pipeline
 		self.pipeline = Gst.Pipeline()
@@ -211,7 +215,6 @@ class Player(object):
 			self.statusValue.set(servertext)
 		self.window.after(100, self.update_tele2)
 
-
 	def exithandler(self):
 		print "Closing out"
 		try:
@@ -277,5 +280,34 @@ class Player(object):
 			autovideosink.set_property("sync", "false")
 			videoconvert.link(autovideosink)
 
+	def updateCompass(self, value):
+		self.compassValue.set(value)
+
+	def screen_thread(self):
+		worker2 = threading.Thread(name="msgblitter", target=self.blitmsg, args=(self.msg_q,))
+		worker2.setDaemon(True)
+		worker2.start()
+
+	def blitmsg(self, mq):
+
+		while True:
+			print "Outer Loop"
+			while not mq.empty():
+				print "getting data from Q"
+				time.sleep(.1)
+				dmsg = mq.get()
+				print("Queue data: " + dmsg)
+				self.compassValue.set(dmsg)
+
+			time.sleep(2)
+
+
 if __name__ == "__main__":
-	Player().run()
+	p = Player()
+	p.do_real_init()
+	p.run()
+
+
+def compass_update(data):
+	compassValue.set(data)
+

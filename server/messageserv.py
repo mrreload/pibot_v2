@@ -22,17 +22,7 @@ class MessageServ(object):
 		pt.tilt(self.tilt_def)
 		self.q = Queue()
 
-	def parse_msg(self, data):
-		# self.q.put(data)
-		data_arry = data.split(',')
-		if data_arry[0] == "Command":
-			self.read_data(data_arry[1])
-		elif data_arry[0] == "Sensor":
-			print "Dod something here"
-		else:
-			print "Nothing to do"
-
-	def read_data(self, data):
+	def read_command(self, data):
 		data = data.strip()
 
 		print "Received message: " + data
