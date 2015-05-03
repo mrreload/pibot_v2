@@ -52,44 +52,40 @@ class ServerTask(threading.Thread):
 
 	def __init__(self):
 		threading.Thread.__init__(self)
-		config = {}
-		execfile("/home/pi/pibot_v2/server/server.conf", config)
-		v_port = config["vid_port"]
-		m_port = config["msg_port"]
+
 
 	def run(self):
-
 		context = zmq.Context()
-	frontend = context.socket(zmq.ROUTER)
-	frontend.bind('tcp://*:5570')
+		frontend = context.socket(zmq.ROUTER)
+		frontend.bind('tcp://*:5570')
 
-	backend = context.socket(zmq.DEALER)
-	backend.bind('inproc://backend')
+		backend = context.socket(zmq.DEALER)
+		backend.bind('inproc://backend')
 
-	workers = []
-	for i in range(5):
-		worker = ServerWorker(context)
-		worker.start()
-		workers.append(worker)
+		workers = []
+		for i in range(5):
+			worker = ServerWorker(context)
+			worker.start()
+			workers.append(worker)
 
-	poll = zmq.Poller()
-	poll.register(frontend, zmq.POLLIN)
-	poll.register(backend, zmq.POLLIN)
+			poll = zmq.Poller()
+			poll.register(frontend, zmq.POLLIN)
+			poll.register(backend, zmq.POLLIN)
 
-	while True:
-		sockets = dict(poll.poll())
-		if frontend in sockets:
-			ident, msg = frontend.recv_multipart()
-			tprint('Server received %s id %s' % (msg, ident))
-			backend.send_multipart([ident, msg])
-		if backend in sockets:
-			ident, msg = backend.recv_multipart()
-			tprint('Sending to frontend %s id %s' % (msg, ident))
-			frontend.send_multipart([ident, msg])
+		while True:
+			sockets = dict(poll.poll())
+			if frontend in sockets:
+				ident, msg = frontend.recv_multipart()
+				tprint('Server received %s id %s' % (msg, ident))
+				backend.send_multipart([ident, msg])
+			if backend in sockets:
+				ident, msg = backend.recv_multipart()
+				tprint('Sending to frontend %s id %s' % (msg, ident))
+				frontend.send_multipart([ident, msg])
 
-	frontend.close()
-	backend.close()
-	context.term()
+		frontend.close()
+		backend.close()
+		context.term()
 
 
 class ServerWorker(threading.Thread):

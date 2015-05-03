@@ -73,11 +73,11 @@ class msg_server(object):
 							self.broadcast_data(data)
 
 					except:
-						print "Unexpected error:", sys.exc_info()[0]
-						self.broadcast_data("Client (%s, %s) is offline" % addr)
-						print "Client (%s, %s) is offline" % addr
-						self.sock.close()
-						self.CONNECTION_LIST.remove(self.sock)
+						# print "Unexpected error:", sys.exc_info()[0]
+						# self.broadcast_data("Client (%s, %s) is offline" % addr)
+						# print "Client (%s, %s) is offline" % addr
+						# self.sock.close()
+						# self.CONNECTION_LIST.remove(self.sock)
 						continue
 
 		self.server_socket.close()

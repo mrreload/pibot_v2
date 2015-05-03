@@ -1,7 +1,8 @@
 __author__ = 'marc.hoaglin'
 import zmq
 import threading
-import sys
+import sys, time
+from random import randint, random
 
 
 def tprint(msg):
@@ -20,18 +21,19 @@ class ServerTask(threading.Thread):
 		self.m_port = str(config["msg_port"])
 
 	def run(self):
+		print 'server starting on: ' + self.m_port
 		context = zmq.Context()
 		frontend = context.socket(zmq.ROUTER)
 		frontend.bind('tcp://*:' + self.m_port)
 
 		backend = context.socket(zmq.DEALER)
 		backend.bind('inproc://sensors')
-
-		workers = []
-		for i in range(5):
-			worker = ServerWorker(context)
-			worker.start()
-			workers.append(worker)
+		#
+		# workers = []
+		# for i in range(5):
+		# 	worker = ServerWorker(context)
+		# 	worker.start()
+		# 	workers.append(worker)
 
 		poll = zmq.Poller()
 		poll.register(frontend, zmq.POLLIN)
@@ -87,7 +89,7 @@ class ClientTask(threading.Thread):
 		socket = context.socket(zmq.DEALER)
 		identity = u'worker-%d' % self.id
 		socket.identity = identity.encode('ascii')
-		socket.connect('tcp://localhost:5570')
+		socket.connect('tcp://localhost:8001')
 		print('Client %s started' % (identity))
 		poll = zmq.Poller()
 		poll.register(socket, zmq.POLLIN)
@@ -114,7 +116,6 @@ def main():
 	for i in range(3):
 		client = ClientTask(i)
 		client.start()
-
 	server.join()
 
 

@@ -209,7 +209,7 @@ class Player(object):
 		if not self.msg_q.empty():
 			servertext = self.msg_q.get_nowait()
 			self.statusValue.set(servertext)
-		#self.statusValue.after(100, self.update_tele2)
+		self.window.after(100, self.update_tele2)
 
 
 	def exithandler(self):

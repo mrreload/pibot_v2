@@ -2,6 +2,7 @@ __author__ = 'mrreload'
 import ConfigParser, os, traceback
 import socket, select, string, sys, threading, time
 import Queue
+
 mc = __import__('master_control')
 
 
@@ -70,6 +71,8 @@ class chat_client(object):
 			self.s.sendall(cmnd)
 		except Exception:
 			traceback.print_exc(file=sys.stdout)
+			self.connecttoserver()
+			self.s.sendall(cmnd)
 
 	def receivedata(self, msgq, sockm, pthr):
 		pthr.msg_q.put("Startup init")
@@ -95,6 +98,8 @@ class chat_client(object):
 				vth.update_tele(dmsg)
 
 			time.sleep(2)
+
+
 
 
 
