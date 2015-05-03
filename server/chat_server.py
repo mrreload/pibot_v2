@@ -91,7 +91,7 @@ class msg_server(object):
 	def parse_msg(self, data):
 		# self.q.put(data)
 		cmd_arry = data.split(';')
-		for cmd in cmd_arry():
+		for cmd in cmd_arry:
 			data_arry = cmd.split(',')
 			if data_arry[0] == "Command":
 				self.mserv.read_command(data_arry[1])

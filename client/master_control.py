@@ -298,7 +298,7 @@ class Player(object):
 				dmsg = mq.get()
 				print("Queue data: " + dmsg)
 				tm_arry = dmsg.split(';')
-				for cmd in tm_arry():
+				for cmd in tm_arry:
 					sn = cmd.split(',')
 					if sn[0] == "Sensor":
 						if sn[1] == "Lidar":
