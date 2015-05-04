@@ -9,7 +9,7 @@ sensor2 = __import__('compass')
 class SensorMain(object):
 	def __init__(self):
 		config = {}
-		execfile("sensor.conf", config)
+		execfile("/home/pi/pibot_v2/sensorclient/sensor.conf", config)
 		args = config["sensor_command"]
 		self.cmd = shlex.split(args)
 		self.saddr = config["i2c_address"]

@@ -106,6 +106,8 @@ class Player(object):
 		#initialize variables to update labels directly
 		self.compassValue = tk.StringVar()
 		self.compassValue.set("Compass!")
+		self.headingValue = tk.StringVar()
+		self.headingValue.set("Heading!")
 		self.lidarValue = tk.StringVar()
 		self.lidarValue.set("Lidar!")
 		self.gpsValue = tk.StringVar()
@@ -114,7 +116,9 @@ class Player(object):
 		self.statusValue.set("Command!")
 		#add labels to frames
 		self.compassLabel = tk.Label(self.compassFrame, textvariable=self.compassValue)
-		self.compassLabel.pack(expand=tk.YES, fill=tk.BOTH)
+		self.compassLabel.pack(side=tk.TOP, expand=tk.YES, fill=tk.BOTH)
+		self.headingLabel = tk.Label(self.compassFrame, textvariable=self.headingValue)
+		self.headingLabel.pack(side=tk.TOP, expand=tk.NO, fill=tk.BOTH)
 		self.lidarLabel = tk.Label(self.lidarFrame, textvariable=self.lidarValue)
 		self.lidarLabel.pack(expand=tk.YES, fill=tk.BOTH)
 		self.gpsLabel = tk.Label(self.gpsFrame, textvariable=self.gpsValue)
@@ -313,6 +317,7 @@ class Player(object):
 							self.lidarValue.set(sn[2])
 						if sn[1] == "Compass":
 							self.compassValue.set(geo.direction_name(float(sn[2])))
+							self.headingValue.set(float("{0:.2f}".format(float(sn[2]))))
 						if sn[1] == "GPS":
 							self.gpsValue.set(sn[2])
 			time.sleep(.5)
