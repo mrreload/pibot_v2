@@ -7,6 +7,7 @@ gi.require_version('Gst', '1.0')
 from gi.repository import Gst
 import ConfigParser
 import geo
+from gi.repository import OsmGpsMap
 
 # Needed for window.get_xid(), xvimagesink.set_window_handle(), respectively:
 # from gi.repository import GdkX11, GstVideo
@@ -33,6 +34,11 @@ class Player(object):
 			self.config.read(os.path.join(path, 'client.conf'))
 			with open(os.path.join(os.path.dirname(path), 'client.conf'), "w") as conf:
 				self.config.write(conf)
+		#set variables for host and port
+		self.host = self.config.get("Connection", "host")
+		self.video_port = int(self.config.get("Connection", "video_port"))
+		self.message_port = int(self.config.get("Connection", "message_port"))
+		#something for gps?
 		my_lon = 33.6880290
 		my_lat = 117.9861210
 		hb = geo.xyz(my_lat, my_lon)
@@ -42,10 +48,7 @@ class Player(object):
 
 
 	def do_real_init(self):
-		global v_host
-		v_host = self.config.get("Connection", "host")
-		global v_port
-		v_port = int(self.config.get("Connection", "video_port"))
+
 		self.msg_q = Queue.Queue(maxsize=0)
 
 		self.showWindow()
@@ -53,8 +56,10 @@ class Player(object):
 		# Keyboard bindings
 		self.setup_key_binds()
 
+		self.map = OsmGpsMap
+		print self.map.__dir__()
 		# Setup Messaging Connection
-		self.chat = ch.chat_client()
+		self.chat = ch.chat_client(self.host, self.message_port)
 		self.chat.connecttoserver()
 		self.chat.receivedata(self.msg_q, self.chat.s, self)
 		self.msg_q.put("Waiting for messages!")
@@ -89,9 +94,9 @@ class Player(object):
 		self.lidarFrame.grid(row=0,column=1, sticky="nsew", padx=1, pady=1)
 		self.gpsFrame = tk.Frame(self.window, background="black")
 		self.gpsFrame.grid(row=0,column=2, sticky="nsew", padx=1, pady=1)
-		self.mapFrame = tk.Frame(self.window, background="black")
+		self.mapFrame = tk.Frame(self.window, background="")
 		self.mapFrame.grid(row=1,column=0,columnspan=3, sticky="nsew", padx=1, pady=1)
-		self.videoFrame = tk.Frame(self.window)
+		self.videoFrame = tk.Frame(self.window, bg="")
 		self.videoFrame.grid(row=0,column=3,rowspan=2, sticky="nsew", padx=1, pady=1)
 		self.statusFrame = tk.Frame(self.window, background="black")
 		self.statusFrame.grid(row=2,column=0,columnspan=4, sticky="nsew", padx=1, pady=1)
@@ -254,8 +259,8 @@ class Player(object):
 		# Create GStreamer elements
 		tcpsrc = Gst.ElementFactory.make("tcpclientsrc", "source")
 		self.pipeline.add(tcpsrc)
-		tcpsrc.set_property("host", v_host)
-		tcpsrc.set_property("port", v_port)
+		tcpsrc.set_property("host", self.host)
+		tcpsrc.set_property("port", self.video_port)
 
 		gdpdepay = Gst.ElementFactory.make("gdpdepay", "gdpdepay")
 		self.pipeline.add(gdpdepay)
@@ -292,16 +297,12 @@ class Player(object):
 			autovideosink.set_property("sync", "false")
 			videoconvert.link(autovideosink)
 
-	def updateCompass(self, value):
-		self.compassValue.set(value)
-
 	def screen_thread(self):
 		worker2 = threading.Thread(name="msgblitter", target=self.blitmsg, args=(self.msg_q,))
 		worker2.setDaemon(True)
 		worker2.start()
 
 	def blitmsg(self, mq):
-
 		while True:
 			# print "Outer Loop"
 			while not mq.empty():
@@ -314,14 +315,13 @@ class Player(object):
 					sn = cmd.split(',')
 					if sn[0] == "Sensor":
 						if sn[1] == "Lidar":
-							self.lidarValue.set(sn[2])
+							self.lidarValue.set(float(sn[2])*0.39370)
 						if sn[1] == "Compass":
 							self.compassValue.set(geo.direction_name(float(sn[2])))
 							self.headingValue.set(float("{0:.2f}".format(float(sn[2]))))
 						if sn[1] == "GPS":
 							self.gpsValue.set(sn[2])
 			time.sleep(.5)
-
 
 if __name__ == "__main__":
 	p = Player()
