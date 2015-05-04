@@ -8,7 +8,7 @@ import Queue
 class sensor_chat(object):
 	def __init__(self):
 		config = {}
-		execfile("sensor.conf", config)
+		execfile("/home/pi/pibot_v2/sensorclient/sensor.conf", config)
 		self.m_host = config["host"]
 		self.m_port = config["message_port"]
 		self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
