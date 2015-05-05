@@ -85,7 +85,7 @@ class msg_server(object):
 	def q_watcher(self):
 		while not self.srv_q.empty():
 			dmsg = srv_q.get()
-			print("Queue data: " + dmsg)
+			print("Server Queue data: " + dmsg)
 			self.broadcast_data(dmsg)
 
 	def parse_msg(self, data):
@@ -94,7 +94,8 @@ class msg_server(object):
 		for cmd in cmd_arry:
 			data_arry = cmd.split(',')
 			if data_arry[0] == "Command":
-				self.mserv.read_command(data_arry[1])
+				servo_deg = self.mserv.read_command(data_arry[1])
+				self.broadcast_data("Sensor," + servo_deg[0] + "," + servo_deg[1])
 			elif data_arry[0] == "Sensor":
 				self.broadcast_data(cmd + ";")
 			else:

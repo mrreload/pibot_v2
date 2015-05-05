@@ -10,7 +10,7 @@ servo.setPWMFreq(50)
 TILT = 0
 PAN = 3
 
-pan_center = 90
+pan_center = 95
 tilt_center = 50
 pan_per_deg = 2.288888889
 tilt_per_deg = 2.65
