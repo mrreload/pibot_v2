@@ -98,3 +98,5 @@ class MessageServ(object):
 			print("What happened?", data)
 		print "Reached the end of doom"
 
+		return self.pan_move, self.tilt_move
+
