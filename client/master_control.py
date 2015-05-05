@@ -1,7 +1,7 @@
 __author__ = 'mrreload'
 import Tkinter as tk
 ch = __import__('chat_client')
-import time, Queue, threading, os, sys
+import time, Queue, threading, os, sys, math
 import gi
 gi.require_version('Gst', '1.0')
 from gi.repository import Gst
@@ -144,7 +144,8 @@ class Player(object):
 		self.mapCanvas.create_line(0, self.mapCanvas_height/2, self.mapCanvas_width, self.mapCanvas_height/2, dash=2, arrow=tk.BOTH)
 		# Draw y-axis
 		self.mapCanvas.create_line(self.mapCanvas_width/2, 0, self.mapCanvas_width/2, self.mapCanvas_height, dash=2, arrow=tk.BOTH)
-		self.plotpoint(5, 5)
+		self.plotpoint(*self.getpoint(20, 10))
+		#print self.getpoint(20, 10)
 
 	def plotpoint(self, x_center, y_center):
 		# Convert from grid coords to real canvas coords
@@ -153,6 +154,14 @@ class Player(object):
 		# Plot the point as a circle centered on the coords given
 		self.mapCanvas.create_oval(x_center-1, y_center-1, x_center+1, y_center+1, fill="red")
 
+	def getpoint(self, degrees, distance):
+		# Convert heading degrees to radians
+		theta = math.radians(90-degrees)
+		# Use trig to calculate coords
+		x = distance*(math.cos(theta))
+		y = distance*(math.sin(theta))
+		print x, y
+		return x, y
 
 	def showConfig(self):
 		self.values = {}
