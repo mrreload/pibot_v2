@@ -31,6 +31,7 @@ class msg_server(object):
 					# msg = message.split(':')
 					# for m in msg:
 					# 	socket.send(m[0] + m[1])
+					print("Sending: " + message)
 					socket.send(message)
 				except:
 					# broken socket connection may be, chat client pressed ctrl+c for example
