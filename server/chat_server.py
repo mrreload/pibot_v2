@@ -94,7 +94,6 @@ class msg_server(object):
 		cmd_arry = data.split(';')
 		for cmd in cmd_arry:
 			data_arry = cmd.split(',')
-			print "Data Array" + data_arry
 			if data_arry[0] == "Command":
 				self.mserv.read_command(data_arry[1])
 				# print(servo_deg[0], servo_deg[1])
@@ -105,7 +104,6 @@ class msg_server(object):
 				self.broadcast_data(cmd + ";")
 			else:
 				print "Nothing to do"
-				print data_arry
 
 if __name__ == "__main__":
 	m = msg_server()
