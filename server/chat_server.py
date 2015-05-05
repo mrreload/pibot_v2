@@ -94,12 +94,12 @@ class msg_server(object):
 		cmd_arry = data.split(';')
 		for cmd in cmd_arry:
 			data_arry = cmd.split(',')
-			print data_arry
+			print "Data Array" + data_arry
 			if data_arry[0] == "Command":
 				servo_deg = self.mserv.read_command(data_arry[1])
 				print(servo_deg[0], servo_deg[1])
 				message = "Sensor," + "PanTilt," + str(servo_deg[0]) + "," + str(servo_deg[1]) + ";"
-				print "messaage to send: " + message
+				print "message to send: " + message
 				self.broadcast_data(message)
 			elif data_arry[0] == "Sensor":
 				self.broadcast_data(cmd + ";")
