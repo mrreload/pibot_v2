@@ -26,7 +26,7 @@ class msg_server(object):
 	def broadcast_data(self, message):
 		# Do not send the message to master socket and the client who has send us the message
 		for socket in self.CONNECTION_LIST:
-			if socket != self.server_socket and socket != self.sock:
+			if socket != self.server_socket:
 				try:
 					# msg = message.split(':')
 					# for m in msg:
