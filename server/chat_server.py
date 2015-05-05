@@ -34,6 +34,7 @@ class msg_server(object):
 					print("Sending: " + message)
 					socket.send(message)
 				except:
+					print "exception in socket"
 					# broken socket connection may be, chat client pressed ctrl+c for example
 					socket.close()
 					self.CONNECTION_LIST.remove(socket)
