@@ -102,7 +102,7 @@ class msg_server(object):
 				self.broadcast_data(cmd + ";")
 			else:
 				print "Nothing to do"
-				print data_arry[0]
+				print data_arry
 
 if __name__ == "__main__":
 	m = msg_server()
