@@ -342,6 +342,8 @@ class Player(object):
 							self.headingValue.set(float("{0:.2f}".format(float(sn[2]))))
 						if sn[1] == "GPS":
 							self.gpsValue.set(sn[2])
+						if sn[1] == "PanTilt":
+							print 'not implemented'
 			time.sleep(.5)
 
 if __name__ == "__main__":
