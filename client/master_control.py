@@ -109,10 +109,10 @@ class Player(object):
 		self.compassValue.set("Compass!")
 		self.headingValue = tk.StringVar()
 		self.headingValue.set("Heading!")
-		self.lidarValue_cm = tk.StringVar()
-		self.lidarValue_cm.set("Lidar cm!")
-		self.lidarValue_in = tk.StringVar()
-		self.lidarValue_in.set("Lidar in!")
+		self.lidarValue = tk.StringVar()
+		self.lidarValue.set("Lidar inches!")
+		self.pantiltValue = tk.StringVar()
+		self.pantiltValue.set("pantilt!")
 		self.gpsValue = tk.StringVar()
 		self.gpsValue.set("GPS!")
 		self.statusValue = tk.StringVar()
@@ -122,10 +122,10 @@ class Player(object):
 		self.compassLabel.pack(side=tk.TOP, expand=tk.YES, fill=tk.BOTH)
 		self.headingLabel = tk.Label(self.compassFrame, textvariable=self.headingValue)
 		self.headingLabel.pack(side=tk.TOP, expand=tk.NO, fill=tk.BOTH)
-		self.lidarLabel_cm = tk.Label(self.lidarFrame, textvariable=self.lidarValue_cm)
-		self.lidarLabel_cm.pack(expand=tk.YES, fill=tk.BOTH)
-		self.lidarLabel_in = tk.Label(self.lidarFrame, textvariable=self.lidarValue_in)
-		self.lidarLabel_in.pack(expand=tk.NO, fill=tk.BOTH)
+		self.lidarLabel = tk.Label(self.lidarFrame, textvariable=self.lidarValue)
+		self.lidarLabel.pack(expand=tk.YES, fill=tk.BOTH)
+		self.pantiltLabel = tk.Label(self.lidarFrame, textvariable=self.pantiltValue)
+		self.pantiltLabel.pack(expand=tk.NO, fill=tk.BOTH)
 		self.gpsLabel = tk.Label(self.gpsFrame, textvariable=self.gpsValue)
 		self.gpsLabel.pack(expand=tk.YES, fill=tk.BOTH)
 		self.statusLabel = tk.Label(self.statusFrame, textvariable=self.statusValue)
@@ -344,7 +344,6 @@ class Player(object):
 					sn = cmd.split(',')
 					if sn[0] == "Sensor":
 						if sn[1] == "Lidar":
-							self.lidarValue_cm.set(sn[2]+" cm")
 							self.lidarValue.set(str(float(sn[2])*0.39370)+" in")
 						if sn[1] == "Compass":
 							self.compassValue.set(geo.direction_name(float(sn[2])))
@@ -352,7 +351,7 @@ class Player(object):
 						if sn[1] == "GPS":
 							self.gpsValue.set(sn[2])
 						if sn[1] == "PanTilt":
-							print 'not implemented'
+							self.pantiltValue.set("pan"+sn[2]+" tilt:"+sn[3])
 			time.sleep(.5)
 
 if __name__ == "__main__":
