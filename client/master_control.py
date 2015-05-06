@@ -47,8 +47,10 @@ class Player(object):
 		la = geo.xyz(34.0522340, -118.2436850)
 		true_north = geo.great_circle_angle(hb, la, geo.geographic_northpole)
 		print "True North " + str(true_north)
+		self.compass_heading = 0
 		self.pan_angle = 0
 		self.lidar_dist = 0
+		self.pointlist = []
 
 
 
@@ -141,14 +143,15 @@ class Player(object):
 		self.window.focus_set()
 
 	def mapresize(self, event):
-		self.mapCanvas.delete()
+		# Clear current map for resize
+		self.mapCanvas.delete(tk.ALL)
 		self.mapCanvas_width, self.mapCanvas_height = event.width, event.height
 		# Draw x-axis
 		self.mapCanvas.create_line(0, self.mapCanvas_height/2, self.mapCanvas_width, self.mapCanvas_height/2, dash=2, arrow=tk.BOTH)
 		# Draw y-axis
 		self.mapCanvas.create_line(self.mapCanvas_width/2, 0, self.mapCanvas_width/2, self.mapCanvas_height, dash=2, arrow=tk.BOTH)
-		self.plotpoint(*self.getpoint(int(self.pan_angle), int(self.lidar_dist)))
-		# print self.getpoint(int(self.pan_angle), int(self.lidar_dist))
+		for point in self.pointlist:
+			self.plotpoint(*point)
 
 	def plotpoint(self, x_center, y_center):
 		# Convert from grid coords to real canvas coords
@@ -165,6 +168,12 @@ class Player(object):
 		y = distance*(math.sin(theta))
 		# print x, y
 		return x, y
+
+	def newpoint(self):
+		if self.lidar_dist != 0:
+			x, y = self.getpoint(self.compass_heading+self.pan_angle, self.lidar_dist)
+			self.pointlist.append([x, y])
+			self.plotpoint(x, y)
 
 	def showConfig(self):
 		self.values = {}
@@ -347,16 +356,19 @@ class Player(object):
 					sn = cmd.split(',')
 					if sn[0] == "Sensor":
 						if sn[1] == "Lidar":
-							self.lidarValue.set(str(float(sn[2])*0.39370)+" in")
-							self.lidar_dist = float(sn[2])
+							self.lidar_dist = float(sn[2])*0.39370
+							self.lidarValue.set(str(self.lidar_dist)+" in")
 						if sn[1] == "Compass":
 							self.compassValue.set(geo.direction_name(float(sn[2])))
-							self.headingValue.set(float("{0:.2f}".format(float(sn[2]))))
+							self.compass_heading = float("{0:.2f}".format(float(sn[2])))
+							self.headingValue.set(self.compass_heading)
 						if sn[1] == "GPS":
 							self.gpsValue.set(sn[2])
 						if sn[1] == "PanTilt":
 							self.pantiltValue.set("pan"+sn[2]+" tilt:"+sn[3])
 							self.pan_angle = float(sn[2])
+							self.tilt_angle = float(sn[3])
+							self.newpoint()
 			time.sleep(.5)
 
 if __name__ == "__main__":
