@@ -14,8 +14,8 @@ else del=1000;
 
 	float cm, inches;
         int feet;    
-    fd = lidar_init(false);
-   
+    fd = lidar_init(true);
+    LidarLiteCalibrate()
     if (fd == -1) {
         printf("initialization error\n");
         }

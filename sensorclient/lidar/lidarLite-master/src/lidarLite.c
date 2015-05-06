@@ -62,6 +62,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
            
            return ( (hiVal << 8) + loVal);
     }
+
+    void LidarLiteCalibrate(){
+            // Write 0x04 to register 0x00
+            uint8_t nackack = 100; // Setup variable to hold ACK/NACK resopnses
+            while (nackack != 0){ // While NACK keep going (i.e. continue polling until sucess message (ACK) is received )
+            nackack = wiringPiI2CWriteReg8(LIDAR_LITE_ADRS, CALI_REG, CALI_OFFSET); // Write Calibration Offset Value to 0x13
+            delay(1); // Wait 1 ms to prevent overpolling
+  }
+}
     
    unsigned char lidar_version(int fd) {
             return( (unsigned char) _read_byteNZ(fd, VERSION_REG) );
