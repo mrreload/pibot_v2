@@ -17,7 +17,8 @@ else del=1000;
     fd = lidar_init(true);
     printf("Calibrating");
     LidarLiteCalibrate();
-    printf("Calibrated %x with %x", CALI_REG, CALI_OFFSET)
+    printf("Calibrated %x with %x", CALI_REG, CALI_OFFSET);
+
     if (fd == -1) {
         printf("initialization error\n");
         }
