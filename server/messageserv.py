@@ -1,25 +1,23 @@
-# Save as server.py 
+# Save as server.py
 # Message Receiver
 import os
 from Queue import Queue
+from Adafruit_PWM_Servo_Driver import PWM
+from ServoHATDriver import stdServo
 
-pt = __import__('pantilt')
 pc = __import__('picontrol')
 
 
 class MessageServ(object):
 	def __init__(self):
-		self.pan_def = pt.pan_center
-		self.tilt_def = pt.tilt_center
-		self.pan_min = 0
-		self.pan_max = 180
-		self.tilt_min = 0
-		self.tilt_max = 100
-		self.pan_move = self.pan_def
-		#global tilt_move
-		self.tilt_move = 50
-		pt.pan(self.pan_def)
-		pt.tilt(self.tilt_def)
+		pwm = PWM(0X40)
+		# stdServo(pwm, frequency, channel, servoRange, minPulse, maxPulse, debug=False)
+		self.pan = stdServo(pwm, 50, 3, 180, 500, 2710)
+		self.tilt = stdServo(pwm, 50, 0, 180, 500, 2710)
+		self.degree_to_move = 5
+		# set to center
+		self.pan.moveToDegree(0)
+		self.tilt.moveToDegree(0)
 		self.q = Queue()
 
 	def read_command(self, data):
@@ -28,6 +26,7 @@ class MessageServ(object):
 		print "Received message: " + data
 		if data == "exit":
 			os.exit(1)
+		# motor controls
 		elif data == "left":
 			pc.go_left()
 		elif data == "right":
@@ -36,67 +35,32 @@ class MessageServ(object):
 			pc.go_forward()
 		elif data == "backward":
 			pc.go_backward()
-		# elif data == "LS":
-		# 	pc.stop_left()
-		# elif data == "RS":
-		# 	pc.stop_right()
-		# elif data == "FS":
-		# 	pc.stop_forward()
-		# elif data == "BS":
-		# 	pc.stop_backward()
 		elif data == "stop":
 			pc.do_stop()
+		# pan tilt controls
 		elif data == "sweep_left":
-			self.pan_move = self.pan_min
-			pt.pan(self.pan_move)
+			self.pan.moveToMin()
 		elif data == "sweep_right":
-			self.pan_move = self.pan_max
-			pt.pan(self.pan_move)
+			self.pan.moveToMax()
 		elif data == "sweep_up":
-			self.tilt_move = self.tilt_min
-			pt.tilt(self.tilt_move)
+			self.tilt.moveToMin()
 		elif data == "sweep_down":
-			self.tilt_move = self.tilt_max
-			pt.tilt(self.tilt_move)
+			self.tilt.moveToMax()
 		elif data == "tilt_up":
-			self.tilt_move -= 5
-			if self.tilt_move >= self.tilt_min:
-				pt.tilt(self.tilt_move)
-			else:
-				print("Min Tilt Already reached, ignoring move request " + str(self.tilt_move))
-				self.tilt_move += 5
+			self.tilt.addDegree(-self.degree_to_move)
 		elif data == "tilt_down":
-			self.tilt_move += 5
-			if self.tilt_move <= self.tilt_max:
-				pt.tilt(self.tilt_move)
-			else:
-				print("Max Tilt Already reached, ignoring move request " + str(self.tilt_move))
-				self.tilt_move -= 5
+			self.tilt.addDegree(self.degree_to_move)
 		elif data == "pan_left":
-			self.pan_move -= 2
-			if self.pan_move >= self.pan_min:
-				pt.pan(self.pan_move)
-			else:
-				print("Min Pan Already reached, ignoring move request " + str(self.pan_move))
-				self.pan_move += 2
-			# pt.pan(pan_move)
+			self.pan.addDegree(-self.degree_to_move)
 		elif data == "pan_right":
-			self.pan_move += 2
-			if self.pan_move <= self.pan_max:
-				pt.pan(self.pan_move)
-			else:
-				print("Max Pan already reached, ignoring move request " + str(self.pan_move))
-				self.pan_move -= 2
-			# pt.pan(pan_move)
+			self.pan.addDegree(self.degree_to_move)
 		elif data == "reset":
-			pt.reset()
-			self.pan_move = self.pan_def
-			self.tilt_move = self.tilt_def
+			self.pan.moveToDegree(0)
+			self.tilt.moveToDegree(0)
 		elif data == "sweep":
 			print("Not implemented!")  #os._exit(0)
 		else:
 			print("What happened?", data)
-		print "Reached the end of doom"
 
-		return self.pan_move, self.tilt_move
-
+		# Return the current position oof the pan and tilt servos in degrees
+		return self.pan.curDegree, self.tilt.curDegree
