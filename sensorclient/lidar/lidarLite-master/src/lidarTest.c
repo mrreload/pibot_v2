@@ -15,7 +15,9 @@ else del=1000;
 	float cm, inches;
         int feet;    
     fd = lidar_init(true);
-    LidarLiteCalibrate()
+    printf("Calibrating");
+    LidarLiteCalibrate();
+    printf("Calibrated %d with %e", CALI_REG, CALI_OFFSET)
     if (fd == -1) {
         printf("initialization error\n");
         }
