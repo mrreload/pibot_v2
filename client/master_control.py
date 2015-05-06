@@ -47,6 +47,9 @@ class Player(object):
 		la = geo.xyz(34.0522340, -118.2436850)
 		true_north = geo.great_circle_angle(hb, la, geo.geographic_northpole)
 		print "True North " + str(true_north)
+		self.pan_angle = 0
+		self.lidar_dist = 0
+
 
 
 	def do_real_init(self):
@@ -57,7 +60,7 @@ class Player(object):
 		# Setup Messaging Connection
 		self.chat = ch.chat_client(self.host, self.message_port)
 		self.chat.connecttoserver()
-		self.chat.receivedata(self.msg_q, self.chat.s, self)
+		self.chat.receivedata(self)
 		self.msg_q.put("Waiting for messages!")
 		self.update_tele2()
 		self.screen_thread()
@@ -138,14 +141,14 @@ class Player(object):
 		self.window.focus_set()
 
 	def mapresize(self, event):
-		self.mapCanvas.delete("all")
+		self.mapCanvas.delete()
 		self.mapCanvas_width, self.mapCanvas_height = event.width, event.height
 		# Draw x-axis
 		self.mapCanvas.create_line(0, self.mapCanvas_height/2, self.mapCanvas_width, self.mapCanvas_height/2, dash=2, arrow=tk.BOTH)
 		# Draw y-axis
 		self.mapCanvas.create_line(self.mapCanvas_width/2, 0, self.mapCanvas_width/2, self.mapCanvas_height, dash=2, arrow=tk.BOTH)
-		self.plotpoint(*self.getpoint(20, 10))
-		#print self.getpoint(20, 10)
+		self.plotpoint(*self.getpoint(int(self.pan_angle), int(self.lidar_dist)))
+		# print self.getpoint(int(self.pan_angle), int(self.lidar_dist))
 
 	def plotpoint(self, x_center, y_center):
 		# Convert from grid coords to real canvas coords
@@ -160,7 +163,7 @@ class Player(object):
 		# Use trig to calculate coords
 		x = distance*(math.cos(theta))
 		y = distance*(math.sin(theta))
-		print x, y
+		# print x, y
 		return x, y
 
 	def showConfig(self):
@@ -335,16 +338,17 @@ class Player(object):
 		while True:
 			# print "Outer Loop"
 			while not mq.empty():
-				print "getting data from Q"
+				# print "getting data from Q"
 				time.sleep(.1)
 				dmsg = mq.get()
-				print("Queue data: " + dmsg)
+				# print("Queue data: " + dmsg)
 				tm_arry = dmsg.split(';')
 				for cmd in tm_arry:
 					sn = cmd.split(',')
 					if sn[0] == "Sensor":
 						if sn[1] == "Lidar":
 							self.lidarValue.set(str(float(sn[2])*0.39370)+" in")
+							self.lidar_dist = float(sn[2])
 						if sn[1] == "Compass":
 							self.compassValue.set(geo.direction_name(float(sn[2])))
 							self.headingValue.set(float("{0:.2f}".format(float(sn[2]))))
@@ -352,6 +356,7 @@ class Player(object):
 							self.gpsValue.set(sn[2])
 						if sn[1] == "PanTilt":
 							self.pantiltValue.set("pan"+sn[2]+" tilt:"+sn[3])
+							self.pan_angle = float(sn[2])
 			time.sleep(.5)
 
 if __name__ == "__main__":

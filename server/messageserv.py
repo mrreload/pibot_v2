@@ -73,20 +73,20 @@ class MessageServ(object):
 				print("Max Tilt Already reached, ignoring move request " + str(self.tilt_move))
 				self.tilt_move -= 5
 		elif data == "pan_left":
-			self.pan_move -= 5
+			self.pan_move -= 2
 			if self.pan_move >= self.pan_min:
 				pt.pan(self.pan_move)
 			else:
 				print("Min Pan Already reached, ignoring move request " + str(self.pan_move))
-				self.pan_move += 5
+				self.pan_move += 2
 			# pt.pan(pan_move)
 		elif data == "pan_right":
-			self.pan_move += 5
+			self.pan_move += 2
 			if self.pan_move <= self.pan_max:
 				pt.pan(self.pan_move)
 			else:
 				print("Max Pan already reached, ignoring move request " + str(self.pan_move))
-				self.pan_move -= 5
+				self.pan_move -= 2
 			# pt.pan(pan_move)
 		elif data == "reset":
 			pt.reset()

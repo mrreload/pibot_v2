@@ -64,7 +64,7 @@ class chat_client(object):
 			# self.connecttoserver()
 			# self.s.sendall(cmnd)
 
-	def receivedata(self, msgq, sockm, pthr):
+	def receivedata(self, pthr):
 		pthr.msg_q.put("Startup init")
 		worker1 = threading.Thread(name="msgworker", target=self.listenmsg, args=(pthr.msg_q, self.s, pthr))
 		worker1.setDaemon(True)
