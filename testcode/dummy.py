@@ -1,6 +1,12 @@
 __author__ = 'marc.hoaglin'
-def hello():
-	return 5, 7
+from Tkinter import *
 
-a = hello()
-print a[0]
+master = Tk()
+
+def callback():
+    print "click!"
+
+b = Button(master, text="OK", command=callback)
+b.pack()
+
+mainloop()

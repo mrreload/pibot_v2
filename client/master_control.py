@@ -51,6 +51,8 @@ class Player(object):
 		self.pan_angle = 0
 		self.lidar_dist = 0
 		self.pointlist = []
+		self.counter = 0
+		self.recording = False
 
 
 
@@ -99,7 +101,7 @@ class Player(object):
 		self.mapFrame.grid(row=1,column=0,columnspan=3, sticky="nsew", padx=1, pady=1)
 		self.videoFrame = tk.Frame(self.window, bg="")
 		self.videoFrame.grid(row=0,column=3,rowspan=2, sticky="nsew", padx=1, pady=1)
-		self.statusFrame = tk.Frame(self.window, background="black")
+		self.statusFrame = tk.Frame(self.window, background="white")
 		self.statusFrame.grid(row=2,column=0,columnspan=4, sticky="nsew", padx=1, pady=1)
 		# Add menu to gui
 		self.menubar = tk.Menu(self.window)
@@ -120,8 +122,12 @@ class Player(object):
 		self.pantiltValue.set("pantilt!")
 		self.gpsValue = tk.StringVar()
 		self.gpsValue.set("GPS!")
-		self.statusValue = tk.StringVar()
-		self.statusValue.set("Command!")
+		# self.statusValue = tk.StringVar()
+		# self.statusValue.set("Command!")
+		self.button = tk.Button(self.statusFrame, text="Record", fg="white", bg="Green", command=self.do_record)
+		self.recordValue = tk.StringVar()
+		self.recordValue.set(0)
+		#self.rec_count_label = tk.Label(self.statusFrame, fg="dark green")
 		#add labels to frames
 		self.compassLabel = tk.Label(self.compassFrame, textvariable=self.compassValue)
 		self.compassLabel.pack(side=tk.TOP, expand=tk.YES, fill=tk.BOTH)
@@ -133,14 +139,20 @@ class Player(object):
 		self.pantiltLabel.pack(expand=tk.NO, fill=tk.BOTH)
 		self.gpsLabel = tk.Label(self.gpsFrame, textvariable=self.gpsValue)
 		self.gpsLabel.pack(expand=tk.YES, fill=tk.BOTH)
-		self.statusLabel = tk.Label(self.statusFrame, textvariable=self.statusValue)
-		self.statusLabel.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.BOTH)
+		self.recLabel = tk.Label(self.statusFrame, textvariable=self.recordValue)
+		self.recLabel.pack(expand=tk.YES, fill=tk.BOTH)
+		# self.statusLabel = tk.Label(self.statusFrame, textvariable=self.statusValue)
+		# self.statusLabel.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.BOTH)
+		# record_counter_update(self.rec_count_label)
+		self.button.pack(side=tk.BOTTOM)
+
 		# Pack a canvas into the map frame for plotting points
 		self.mapCanvas = tk.Canvas(self.mapFrame, bg="white", width=1, height=1)
 		self.mapCanvas.pack(expand=tk.YES, fill=tk.BOTH)
 		self.mapCanvas.bind("<Configure>", self.mapresize)
 		#set focus to video frame
 		self.window.focus_set()
+		self.window_id = self.videoFrame.winfo_id()
 
 	def mapresize(self, event):
 		# Clear current map for resize
@@ -174,6 +186,25 @@ class Player(object):
 			x, y = self.getpoint(self.compass_heading+self.pan_angle, self.lidar_dist)
 			self.pointlist.append([x, y])
 			self.plotpoint(x, y)
+
+	def do_record(self):
+		if self.recording:
+			self.button.configure(text="Record", bg="green")
+			print "Cancelling Record!"
+			self.videoFrame.after_cancel(self.count)
+			self.counter = 0
+			self.recording = False
+		else:
+			self.button.configure(text="Stop", bg="red")
+			print "Start Record!"
+			self.recording = True
+			self.record_counter_update()
+
+
+	def record_counter_update(self):
+		self.counter += 1
+		self.recordValue.set(self.counter)
+		self.count = self.videoFrame.after(1000, self.record_counter_update)
 
 	def showConfig(self):
 		self.values = {}
@@ -227,7 +258,7 @@ class Player(object):
 		print "clicked at", event.x, event.y
 
 	def keypress(self, event, command):
-		self.statusValue.set(command)
+		# self.statusValue.set(command)
 		self.chat.sendcommand(command)
 
 	def run(self):
@@ -270,7 +301,7 @@ class Player(object):
 	def update_tele2(self):
 		if not self.msg_q.empty():
 			servertext = self.msg_q.get_nowait()
-			self.statusValue.set(servertext)
+			# self.statusValue.set(servertext)
 		# self.window.after(100, self.update_tele2)
 
 	def exithandler(self):
@@ -295,7 +326,7 @@ class Player(object):
 
 		# This is needed to make the video output in our DrawingArea:
 		self.bus.enable_sync_message_emission()
-		self.bus.connect('sync-message::element', self.on_sync_message, self.videoFrame.winfo_id())
+		self.bus.connect('sync-message::element', self.on_sync_message, self.window_id)
 
 		# Create GStreamer elements
 		tcpsrc = Gst.ElementFactory.make("tcpclientsrc", "source")
@@ -375,5 +406,7 @@ if __name__ == "__main__":
 	p = Player()
 	p.do_real_init()
 	p.run()
+
+
 
 
