@@ -122,13 +122,16 @@ class Player(object):
 		self.pantiltValue.set("pantilt!")
 		self.gpsValue = tk.StringVar()
 		self.gpsValue.set("GPS!")
-		# self.statusValue = tk.StringVar()
-		# self.statusValue.set("Command!")
-		self.button = tk.Button(self.statusFrame, text="Record", fg="white", bg="Green", command=self.do_record)
+		self.statusValue = tk.StringVar()
+		self.statusValue.set("Command!")
 		self.recordValue = tk.StringVar()
 		self.recordValue.set(0)
-		#self.rec_count_label = tk.Label(self.statusFrame, fg="dark green")
-		#add labels to frames
+
+		# Add a record button to the status bar
+		self.recordButton = tk.Button(self.statusFrame, text="Record", fg="white", bg="Green", padx=5, command=self.do_record)
+		self.recordButton.pack(side=tk.RIGHT)
+
+		# Add labels to frames
 		self.compassLabel = tk.Label(self.compassFrame, textvariable=self.compassValue)
 		self.compassLabel.pack(side=tk.TOP, expand=tk.YES, fill=tk.BOTH)
 		self.headingLabel = tk.Label(self.compassFrame, textvariable=self.headingValue)
@@ -140,11 +143,9 @@ class Player(object):
 		self.gpsLabel = tk.Label(self.gpsFrame, textvariable=self.gpsValue)
 		self.gpsLabel.pack(expand=tk.YES, fill=tk.BOTH)
 		self.recLabel = tk.Label(self.statusFrame, textvariable=self.recordValue)
-		self.recLabel.pack(expand=tk.YES, fill=tk.BOTH)
-		# self.statusLabel = tk.Label(self.statusFrame, textvariable=self.statusValue)
-		# self.statusLabel.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.BOTH)
-		# record_counter_update(self.rec_count_label)
-		self.button.pack(side=tk.BOTTOM)
+		self.recLabel.pack(side=tk.RIGHT, expand=tk.NO, fill=tk.BOTH)
+		self.statusLabel = tk.Label(self.statusFrame, textvariable=self.statusValue)
+		self.statusLabel.pack(side=tk.LEFT, expand=tk.YES, fill=tk.BOTH)
 
 		# Pack a canvas into the map frame for plotting points
 		self.mapCanvas = tk.Canvas(self.mapFrame, bg="white", width=1, height=1)
@@ -178,6 +179,7 @@ class Player(object):
 		# Use trig to calculate coords
 		x = distance*(math.cos(theta))
 		y = distance*(math.sin(theta))
+		z = 0
 		# print x, y
 		return x, y
 
@@ -189,13 +191,13 @@ class Player(object):
 
 	def do_record(self):
 		if self.recording:
-			self.button.configure(text="Record", bg="green")
+			self.recordButton.configure(text="Record", bg="green")
 			print "Cancelling Record!"
 			self.videoFrame.after_cancel(self.count)
 			self.counter = 0
 			self.recording = False
 		else:
-			self.button.configure(text="Stop", bg="red")
+			self.recordButton.configure(text="Stop", bg="red")
 			print "Start Record!"
 			self.recording = True
 			self.record_counter_update()
@@ -258,7 +260,7 @@ class Player(object):
 		print "clicked at", event.x, event.y
 
 	def keypress(self, event, command):
-		# self.statusValue.set(command)
+		self.statusValue.set("Command sent: "+command)
 		self.chat.sendcommand(command)
 
 	def run(self):
@@ -400,6 +402,7 @@ class Player(object):
 						if sn[1] == "Lidar":
 							self.lidar_dist = float(sn[2])*0.39370
 							self.lidarValue.set(str(self.lidar_dist)+" in")
+							self.newpoint()
 						if sn[1] == "Compass":
 							self.compassValue.set(geo.direction_name(float(sn[2])))
 							self.compass_heading = float("{0:.2f}".format(float(sn[2])))
@@ -407,10 +410,9 @@ class Player(object):
 						if sn[1] == "GPS":
 							self.gpsValue.set(sn[2])
 						if sn[1] == "PanTilt":
-							self.pantiltValue.set("pan"+sn[2]+" tilt:"+sn[3])
+							self.pantiltValue.set("pan: "+sn[2]+" tilt: "+sn[3])
 							self.pan_angle = float(sn[2])
 							self.tilt_angle = float(sn[3])
-							self.newpoint()
 			time.sleep(.5)
 
 if __name__ == "__main__":
