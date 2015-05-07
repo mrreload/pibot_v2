@@ -1,6 +1,6 @@
 __author__ = 'mrreload'
 import shlex, sys, subprocess, threading
-from time import sleep
+from time import time, sleep
 schat = __import__('sensor_chat')
 sensor1 = __import__('lidar_sensor')
 sensor2 = __import__('compass')
@@ -28,12 +28,12 @@ class SensorMain(object):
 
 	def lidar(self):
 		while True:
-			self.snd_msg("Lidar," + str(self.sens1.read_sensor()))
+			self.snd_msg("Lidar," + str(self.sens1.read_sensor()) + "," + str(time.time()))
 			sleep(1)
 
 	def compass(self):
 		while True:
-			self.snd_msg("Compass," + str(self.sens2.get_bearing()))
+			self.snd_msg("Compass," + str(self.sens2.get_bearing())+ "," + str(time.time()))
 			sleep(1)
 
 	def snd_msg(self, msg):

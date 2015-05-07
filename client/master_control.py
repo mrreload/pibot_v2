@@ -269,8 +269,19 @@ class Player(object):
 		self.window.mainloop()
 
 	def quit(self, window):
+		print "Closing out"
+		try:
+			while 1:
+				print "Q:" + self.msg_q.get_nowait()
+		except Empty:
+			print "Queue empty"
+			pass
+		print "Closing Video Stream"
 		self.pipeline.set_state(Gst.State.NULL)
+		print "Destroying root window"
 		self.window.destroy()
+		print "Quitting"
+		self.window.quit()
 
 	def on_sync_message(self, bus, message, w_id):
 		if message.get_structure() is None:

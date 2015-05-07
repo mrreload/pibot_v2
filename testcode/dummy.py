@@ -1,12 +1,7 @@
 __author__ = 'marc.hoaglin'
-from Tkinter import *
+import time
 
-master = Tk()
+ts = time.time()
+print(ts)
 
-def callback():
-    print "click!"
 
-b = Button(master, text="OK", command=callback)
-b.pack()
-
-mainloop()
