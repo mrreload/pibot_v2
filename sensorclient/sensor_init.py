@@ -1,6 +1,6 @@
 __author__ = 'mrreload'
 import shlex, sys, subprocess, threading
-from time import time, sleep
+import time
 schat = __import__('sensor_chat')
 sensor1 = __import__('lidar_sensor')
 sensor2 = __import__('compass')

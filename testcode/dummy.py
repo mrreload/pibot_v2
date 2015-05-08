@@ -1,5 +1,5 @@
 __author__ = 'marc.hoaglin'
-import time
+from time import time
 
 ts = time.time()
 print(ts)
