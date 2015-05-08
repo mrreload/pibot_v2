@@ -2,8 +2,7 @@ __author__ = 'mrreload'
 # Tcp Chat server
 
 import socket, select, sys, traceback, Queue, time
-
-import MessageServ from messageserv
+from messageserv import MessageServ
 
 
 class msg_server(object):
