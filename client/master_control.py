@@ -405,7 +405,7 @@ class Player(object):
 						if sn[1] == "Lidar":
 							self.lidar_dist = float(sn[2])*0.39370
 							self.lidarValue.set(str(self.lidar_dist)+" in")
-							self.lidarDict.update(sn[3], self.lidar_dist)
+							self.lidarDict.update({sn[3]: self.lidar_dist})
 						if sn[1] == "Compass":
 							self.compassValue.set(geo.direction_name(float(sn[2])))
 							self.compass_heading = float("{0:.2f}".format(float(sn[2])))
