@@ -3,7 +3,7 @@ __author__ = 'mrreload'
 
 import socket, select, sys, traceback, Queue, time
 
-ms = __import__('messageserv')
+import MessageServ from messageserv
 
 
 class msg_server(object):
@@ -20,7 +20,7 @@ class msg_server(object):
 		# this has no effect, why ?
 		self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		self.srv_q = Queue.Queue(maxsize=0)
-		self.mserv = ms.MessageServ()
+		self.mserv = MessageServ()
 
 	# Function to broadcast chat messages to all connected clients
 	def broadcast_data(self, message):
