@@ -1,7 +1,7 @@
 __author__ = 'mrreload'
 # Tcp Chat server
 
-import socket, select, sys, traceback, Queue
+import socket, select, sys, traceback, Queue, time
 
 ms = __import__('messageserv')
 
@@ -98,7 +98,7 @@ class msg_server(object):
 			if data_arry[0] == "Command":
 				servo_deg = self.mserv.read_command(data_arry[1])
 				# print(servo_deg[0], servo_deg[1])
-				message = "Sensor," + "PanTilt," + str(servo_deg[0]) + "," + str(servo_deg[1]) + ";"
+				message = "Sensor," + "PanTilt," + str(servo_deg[0]) + "," + str(servo_deg[1]) + str(time.time()) + ";"
 				print "message to send: " + message
 				self.broadcast_data(message)
 			elif data_arry[0] == "Sensor":

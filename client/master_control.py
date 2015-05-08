@@ -416,8 +416,8 @@ class Player(object):
 							self.pantiltValue.set("pan:"+sn[2]+" tilt:"+sn[3])
 							self.pan_angle = float(sn[2])
 							self.tilt_angle = float(sn[3])
-							self.panDict.update(sn[4], sn[2])
-							self.tiltDict.update(sn[4], sn[3])
+							self.panDict.update({sn[4]: sn[2]})
+							self.tiltDict.update({sn[4]: sn[3]})
 							self.newpoint()
 			time.sleep(.5)
 
