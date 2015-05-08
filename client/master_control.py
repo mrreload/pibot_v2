@@ -7,6 +7,7 @@ gi.require_version('Gst', '1.0')
 from gi.repository import Gst
 import ConfigParser
 import geo
+from collections import OrderedDict
 
 # Needed for window.get_xid(), xvimagesink.set_window_handle(), respectively:
 # from gi.repository import GdkX11, GstVideo
