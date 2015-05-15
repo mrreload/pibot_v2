@@ -2,6 +2,8 @@ import Tkinter as tk
 from gi.repository import Gst
 import time, Queue, threading, os, sys, math
 import csv
+
+Gst.init(None)
 Empty = Queue.Empty
 
 class gui(object):
@@ -93,6 +95,8 @@ class gui(object):
 		self.window.focus_set()
 		self.window_id = self.videoFrame.winfo_id()
 
+		self.setup_key_binds()
+
 	def showConfig(self):
 		self.values = {}
 		self.configWindow = tk.Toplevel(self.window)
@@ -151,7 +155,7 @@ class gui(object):
 	def run(self):
 		self.video.setup_video()
 		# Start the Gstreamer pipeline
-		self.master_object.pipeline.set_state(Gst.State.PLAYING)
+		self.video.pipeline.set_state(Gst.State.PLAYING)
 		# Open the Tk window
 		self.window.mainloop()
 
@@ -164,7 +168,7 @@ class gui(object):
 			print "Queue empty"
 			pass
 		print "Closing Video Stream"
-		self.master_object.pipeline.set_state(Gst.State.NULL)
+		self.video.pipeline.set_state(Gst.State.NULL)
 		print "Destroying root window"
 		self.window.destroy()
 		print "Quitting"
@@ -207,9 +211,9 @@ class map(object):
 		return x, y, z
 
 	def newpoint(self):
-		if self.gui.lidar_dist != 0:
-			x, y, z = self.getpoint(self.gui.compass_heading+self.gui.pan_angle, self.gui.tilt_angle, self.gui.lidar_dist)
-			self.gui.pointlist.append([x, y, z])
+		if self.gui.master_object.lidar_dist != 0:
+			x, y, z = self.getpoint(self.gui.master_object.compass_heading+self.gui.master_object.pan_angle, self.gui.master_object.tilt_angle, self.gui.master_object.lidar_dist)
+			self.gui.master_object.pointlist.append([x, y, z])
 			self.plotpoint(x, y, z)
 
 	def clearpoints(self):
@@ -224,58 +228,85 @@ class map(object):
 class video(object):
 	def __init__(self, gui):
 		self.gui = gui
+		# Create GStreamer pipeline
+		self.pipeline = Gst.Pipeline()
+		# Create bus to get events from GStreamer pipeline
+		self.bus = self.pipeline.get_bus()
 		self.recording = False
 		self.counter = 0
 
 	def setup_video(self):
-		self.gui.master_object.bus.add_signal_watch()
-		self.gui.master_object.bus.connect('message::eos', self.gui.master_object.on_eos)
-		self.gui.master_object.bus.connect('message::error', self.gui.master_object.on_error)
+		self.bus.add_signal_watch()
+		self.bus.connect('message::eos', self.on_eos)
+		self.bus.connect('message::error', self.on_error)
 
 		# This is needed to make the video output in our DrawingArea:
-		self.gui.master_object.bus.enable_sync_message_emission()
-		self.gui.master_object.bus.connect('sync-message::element', self.gui.master_object.on_sync_message, self.gui.window_id)
+		self.bus.enable_sync_message_emission()
+		self.bus.connect('sync-message::element', self.on_sync_message, self.gui.window_id)
 
 		# Create GStreamer elements
 		tcpsrc = Gst.ElementFactory.make("tcpclientsrc", "source")
-		self.gui.master_object.pipeline.add(tcpsrc)
+		self.pipeline.add(tcpsrc)
 		tcpsrc.set_property("host", self.gui.master_object.host)
 		tcpsrc.set_property("port", self.gui.master_object.video_port)
 
 		gdpdepay = Gst.ElementFactory.make("gdpdepay", "gdpdepay")
-		self.gui.master_object.pipeline.add(gdpdepay)
+		self.pipeline.add(gdpdepay)
 		tcpsrc.link(gdpdepay)
 
 		rtph264depay = Gst.ElementFactory.make("rtph264depay", "rtph264depay")
-		self.gui.master_object.pipeline.add(rtph264depay)
+		self.pipeline.add(rtph264depay)
 		gdpdepay.link(rtph264depay)
 
 		h264parse = Gst.ElementFactory.make("h264parse", "h264parse")
-		self.gui.master_object.pipeline.add(h264parse)
+		self.pipeline.add(h264parse)
 		rtph264depay.link(h264parse)
 
 		if os.name == "posix":
 			vaapidecode = Gst.ElementFactory.make("vaapidecode", "vaapidecode")
-			self.gui.master_object.pipeline.add(vaapidecode)
+			self.pipeline.add(vaapidecode)
 			h264parse.link(vaapidecode)
 
 			vaapisink = Gst.ElementFactory.make("vaapisink", "vaapisink")
-			self.gui.master_object.pipeline.add(vaapisink)
+			self.pipeline.add(vaapisink)
 			vaapisink.set_property("sync", "false")
 			vaapidecode.link(vaapisink)
 		else:
 			avdec_h264 = Gst.ElementFactory.make("avdec_h264", "avdec_h264")
-			self.gui.master_object.pipeline.add(avdec_h264)
+			self.pipeline.add(avdec_h264)
 			h264parse.link(avdec_h264)
 
 			videoconvert = Gst.ElementFactory.make("videoconvert", "videoconvert")
-			self.gui.master_object.pipeline.add(videoconvert)
+			self.pipeline.add(videoconvert)
 			avdec_h264.link(videoconvert)
 
 			autovideosink = Gst.ElementFactory.make("autovideosink", "autovideosink")
-			self.gui.master_object.pipeline.add(autovideosink)
+			self.pipeline.add(autovideosink)
 			autovideosink.set_property("sync", "false")
 			videoconvert.link(autovideosink)
+
+	def on_sync_message(self, bus, message, w_id):
+		if message.get_structure() is None:
+			return
+		if message.get_structure().get_name() == 'prepare-window-handle':
+			#print('prepare-window-handle')
+			image_sink = message.src
+			image_sink.set_property('force-aspect-ratio', True)
+			image_sink.set_window_handle(w_id)
+		else:
+			print("No Match")
+			print(message.get_structure().get_name())
+
+	def on_eos(self, bus, msg):
+		print('on_eos(): seeking to start of video')
+		self.pipeline.seek_simple(
+			Gst.Format.TIME,
+			Gst.SeekFlags.FLUSH | Gst.SeekFlags.KEY_UNIT,
+			0
+		)
+
+	def on_error(self, bus, msg):
+		print('on_error():', msg.parse_error())
 
 	def do_record(self):
 		if self.recording:

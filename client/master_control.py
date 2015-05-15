@@ -20,9 +20,7 @@ from gi.repository import GdkX11, GstVideo
 Gst.init(None)
 Empty = Queue.Empty
 
-
 class Player(object):
-
 	def __init__(self):
 		# Grab and parse the client.conf file
 		self.config = ConfigParser.ConfigParser()
@@ -68,37 +66,8 @@ class Player(object):
 		self.update_tele2()
 		self.screen_thread()
 
-		# Create GStreamer pipeline
-		self.pipeline = Gst.Pipeline()
-
-		# Create bus to get events from GStreamer pipeline
-		self.bus = self.pipeline.get_bus()
-
 		# Initialize the tkinter gui
 		self.gui = clientgui.gui(self)
-
-	def on_sync_message(self, bus, message, w_id):
-		if message.get_structure() is None:
-			return
-		if message.get_structure().get_name() == 'prepare-window-handle':
-			#print('prepare-window-handle')
-			image_sink = message.src
-			image_sink.set_property('force-aspect-ratio', True)
-			image_sink.set_window_handle(w_id)
-		else:
-			print("No Match")
-			print(message.get_structure().get_name())
-
-	def on_eos(self, bus, msg):
-		print('on_eos(): seeking to start of video')
-		self.pipeline.seek_simple(
-			Gst.Format.TIME,
-			Gst.SeekFlags.FLUSH | Gst.SeekFlags.KEY_UNIT,
-			0
-		)
-
-	def on_error(self, bus, msg):
-		print('on_error():', msg.parse_error())
 
 	def update_tele(self, servertext):
 		self.gui.statusValue.set(servertext)
