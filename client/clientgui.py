@@ -194,8 +194,9 @@ class map(object):
 		# Convert from grid coords to real canvas coords
 		x_center = (self.mapCanvas_width/2) + x_center
 		y_center = (self.mapCanvas_height/2) - y_center
+		color = colormap(abs(z_center))
 		# Plot the point as a circle centered on the coords given
-		self.gui.mapCanvas.create_oval(x_center-1, y_center-1, x_center+1, y_center+1, fill="red", disabledoutline="1")
+		self.gui.mapCanvas.create_oval(x_center-1, y_center-1, x_center+1, y_center+1, fill=color, disabledoutline="1")
 
 	def colormap(self, percent):
 		# This function will take a value from 0 - 100 and return a color from red to blue respectively
@@ -204,19 +205,22 @@ class map(object):
 			rgb = "#%02x%02x%02x" % (255, percent*12.75, 0)
 		elif percent <= 40:
 			#from orange to yellow
-			percent = percent-20
-			rgb = "#%02x%02x%02x" % (255, percent*12.75, 0)
+			percent = abs(((percent-20)*12.75)-255)
+			rgb = "#%02x%02x%02x" % (percent, 255, 0)
 		elif percent <= 60:
 			#from yellow to green
-			rgb = "#%02x%02x%02x" % (255, percent*12.75, 0)
+			rgb = "#%02x%02x%02x" % (0, 255, percent*12.75)
 		elif percent <= 80:
 			#from green to blue
-			rgb = "#%02x%02x%02x" % (255, percent*12.75, 0)
+			percent = abs(((percent-20)*12.75)-255)
+			rgb = "#%02x%02x%02x" % (0, percent, 255)
 		elif percent <= 100:
 			#from blue to black
-			rgb = "#%02x%02x%02x" % (255, percent*12.75, 0)
+			percent = abs(((percent-20)*12.75)-255)
+			rgb = "#%02x%02x%02x" % (0, 0, percent)
 		else:
 			rgb = "#666666"
+		return rgb
 
 	def getpoint(self, heading_degrees, pitch_degrees, distance):
 		# Convert heading degrees to radians
