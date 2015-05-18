@@ -107,12 +107,13 @@ class Player(object):
 						if sn[1] == "GPS":
 							self.gui.gpsValue.set(sn[2])
 						if sn[1] == "PanTilt":
-							self.gui.pantiltValue.set("pan: "+sn[2]+" tilt: "+sn[3])
 							self.pan_angle = float(sn[2])
 							self.tilt_angle = -1*(float(sn[3]))
+							self.gui.pantiltValue.set("pan: "+str(self.pan_angle)+" tilt: "+str(self.tilt_angle))
 							# print self.pan_angle, self.tilt_angle
 							self.panDict.update({sn[4]: sn[2]})
 							self.tiltDict.update({sn[4]: sn[3]})
+							self.gui.map.newpoint()
 			time.sleep(.5)
 
 if __name__ == "__main__":

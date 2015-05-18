@@ -202,7 +202,7 @@ class map(object):
 		# print 'Heading: ' + str(heading_degrees)
 		theta_heading = math.radians(90-heading_degrees)
 		# Convert tilt/pitch degrees to radians
-		theta_pitch = math.radians(90-pitch_degrees)
+		theta_pitch = math.radians(pitch_degrees)
 		# Use trig to calculate coords
 		a = distance*(math.cos(theta_pitch))
 		x = a*(math.cos(theta_heading))
