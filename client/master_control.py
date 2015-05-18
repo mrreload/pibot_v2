@@ -66,7 +66,7 @@ class Player(object):
 		self.msg_q.put("Waiting for messages!")
 		self.update_tele2()
 		self.screen_thread()
-
+		# self.map_thread()
 		# Initialize the tkinter gui
 		self.gui = clientgui.gui(self)
 
@@ -84,6 +84,11 @@ class Player(object):
 		worker2.setDaemon(True)
 		worker2.start()
 
+	def map_thread(self):
+		worker2 = threading.Thread(name="map_plotter", target=self.map_plot, args=(self.lidarDict, self.compassDict, self.panDict, self.tiltDict,))
+		worker2.setDaemon(True)
+		worker2.start()
+
 	def blitmsg(self, mq):
 		while True:
 			# print "Outer Loop"
@@ -97,23 +102,38 @@ class Player(object):
 					sn = cmd.split(',')
 					if sn[0] == "Sensor":
 						if sn[1] == "Lidar":
+							# sn[2] = measurement  sn[3] = timestamp
 							self.lidar_dist = float(sn[2])*0.39370
 							self.gui.lidarValue.set(str(self.lidar_dist)+" in")
+							self.lidarDict.update({sn[3]: sn[2]})
 							self.gui.map.newpoint()
 						if sn[1] == "Compass":
+							# sn[2] = heading  sn[3] = timestamp
 							self.gui.compassValue.set(geo.direction_name(float(sn[2])))
 							self.compass_heading = float("{0:.2f}".format(float(sn[2])))
 							self.gui.headingValue.set(self.compass_heading)
+							self.compassDict.update({sn[3]: sn[2]})
 						if sn[1] == "GPS":
 							self.gui.gpsValue.set(sn[2])
 						if sn[1] == "PanTilt":
+							# sn[2] = pan degrees, sn[3] = tilt degrees, sn[4] = timestamp
 							self.pan_angle = float(sn[2])
 							self.tilt_angle = -1*(float(sn[3]))
 							self.gui.pantiltValue.set("pan: "+str(self.pan_angle)+" tilt: "+str(self.tilt_angle))
 							self.panDict.update({sn[4]: sn[2]})
 							self.tiltDict.update({sn[4]: sn[3]})
-							# self.gui.map.newpoint()
+							self.gui.map.newpoint()
 			time.sleep(.5)
+
+	def map_plot(self, lidar, compass, pan, tilt):
+		while True:
+			while not lidar.empty():
+				cmp = lidar.popitem(last=False)
+				# self.gui.map.new_point(compass.get(cmp[0]), pan.get(cmp[0]), tilt.get(cmp[0]), cmp[1])
+			time.sleep(1)
+
+
+
 
 if __name__ == "__main__":
 	p = Player()

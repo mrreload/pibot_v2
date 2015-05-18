@@ -217,6 +217,13 @@ class map(object):
 			self.gui.master_object.pointlist.append([x, y, z])
 			self.plotpoint(x, y, z)
 
+	# def new_point(self, c_heading, p_angle, t_angle, l_dist):
+	# 	if self.gui.master_object.lidar_dist != 0:
+	# 		x, y, z = self.getpoint(c_heading+p_angle, t_angle, l_dist)
+	# 		print "Point: (%d, %d, %d)" % (x, y, z)
+	# 		self.gui.master_object.pointlist.append([x, y, z])
+	# 		self.plotpoint(x, y, z)
+
 	def clearpoints(self):
 		del self.gui.master_object.pointlist[:]
 		self.gui.mapCanvas.event_generate("<Configure>")
