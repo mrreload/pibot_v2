@@ -51,6 +51,7 @@ class Player(object):
 		print "True North " + str(true_north)
 		self.compass_heading = 0
 		self.pan_angle = 0
+		self.tilt_angle = 0
 		self.lidar_dist = 0
 		self.pointlist = []
 		self.lidarDict = OrderedDict()
@@ -109,6 +110,7 @@ class Player(object):
 							self.gui.pantiltValue.set("pan: "+sn[2]+" tilt: "+sn[3])
 							self.pan_angle = float(sn[2])
 							self.tilt_angle = -1*(float(sn[3]))
+							# print self.pan_angle, self.tilt_angle
 							self.panDict.update({sn[4]: sn[2]})
 							self.tiltDict.update({sn[4]: sn[3]})
 							self.gui.map.newpoint()
