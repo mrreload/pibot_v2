@@ -89,7 +89,7 @@ class Player(object):
 			# print "Outer Loop"
 			while not mq.empty():
 				# print "getting data from Q"
-				time.sleep(.1)
+				# time.sleep(.1)
 				dmsg = mq.get()
 				# print("Queue data: " + dmsg)
 				tm_arry = dmsg.split(';')
@@ -112,7 +112,7 @@ class Player(object):
 							self.gui.pantiltValue.set("pan: "+str(self.pan_angle)+" tilt: "+str(self.tilt_angle))
 							self.panDict.update({sn[4]: sn[2]})
 							self.tiltDict.update({sn[4]: sn[3]})
-							self.gui.map.newpoint()
+							# self.gui.map.newpoint()
 			time.sleep(.5)
 
 if __name__ == "__main__":
