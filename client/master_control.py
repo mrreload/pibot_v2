@@ -113,7 +113,6 @@ class Player(object):
 							# print self.pan_angle, self.tilt_angle
 							self.panDict.update({sn[4]: sn[2]})
 							self.tiltDict.update({sn[4]: sn[3]})
-							self.gui.map.newpoint()
 			time.sleep(.5)
 
 if __name__ == "__main__":

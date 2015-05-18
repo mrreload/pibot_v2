@@ -54,7 +54,7 @@ class gui(object):
 		self.lidarValue = tk.StringVar()
 		self.lidarValue.set("Lidar inches!")
 		self.pantiltValue = tk.StringVar()
-		self.pantiltValue.set("pantilt!")
+		self.pantiltValue.set("pan: 0 tilt: 0")
 		self.gpsValue = tk.StringVar()
 		self.gpsValue.set("GPS!")
 		self.statusValue = tk.StringVar()
@@ -177,9 +177,6 @@ class gui(object):
 class map(object):
 	def __init__(self, gui):
 		self.gui = gui
-		self.mapCanvas_width = 0
-		self.mapCanvas_height = 0
-
 
 	def mapresize(self, event):
 		# Clear current map for resize
@@ -196,7 +193,7 @@ class map(object):
 	def plotpoint(self, x_center, y_center, z_center):
 		# Convert from grid coords to real canvas coords
 		x_center = (self.mapCanvas_width/2) + x_center
-		y_center = (self.mapCanvas_height/2) + y_center
+		y_center = (self.mapCanvas_height/2) - y_center
 		# Plot the point as a circle centered on the coords given
 		self.gui.mapCanvas.create_oval(x_center-1, y_center-1, x_center+1, y_center+1, fill="red")
 
@@ -216,8 +213,8 @@ class map(object):
 
 	def newpoint(self):
 		if self.gui.master_object.lidar_dist != 0:
-			x, y, z = self.getpoint(self.gui.master_object.compass_heading+self.gui.master_object.pan_angle,
-			                        self.gui.master_object.tilt_angle, self.gui.master_object.lidar_dist)
+			x, y, z = self.getpoint(self.gui.master_object.compass_heading+self.gui.master_object.pan_angle, self.gui.master_object.tilt_angle, self.gui.master_object.lidar_dist)
+			print "Point: (%d, %d, %d)" % (x, y, z)
 			self.gui.master_object.pointlist.append([x, y, z])
 			self.plotpoint(x, y, z)
 
