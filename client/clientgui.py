@@ -208,7 +208,6 @@ class map(object):
 		x = a*(math.cos(theta_heading))
 		y = a*(math.sin(theta_heading))
 		z = distance*(math.sin(theta_pitch))
-		# print x, y, z
 		return x, y, z
 
 	def newpoint(self):
