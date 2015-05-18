@@ -12,7 +12,7 @@ tr = collections.OrderedDict()
 # tr.update({"Hola": "Adios"})
 # tr["Hello"].add["GoodBye"]
 
-tr[time.time()] = 123.01
+tr[float(time.time())] = 123.01
 tr2[time.time()] = "First Value"
 time.sleep(.01)
 tr[time.time()] = 456.78
@@ -21,6 +21,9 @@ time.sleep(.01)
 tr[time.time()] = 654.001
 tr2[time.time()] = "3rd value"
 
+print "time.time(): %f " %  time.time()
+ti = float("%0.3f" %  time.time())
+print float(ti)
 print 'Size=' + str(len(tr))
 # tr.items()
 print 'all values'

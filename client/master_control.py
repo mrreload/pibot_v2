@@ -65,10 +65,13 @@ class Player(object):
 		self.chat.receivedata(self)
 		self.msg_q.put("Waiting for messages!")
 		self.update_tele2()
-		self.screen_thread()
-		# self.map_thread()
+
 		# Initialize the tkinter gui
 		self.gui = clientgui.gui(self)
+		print 'Starting Screen Thread'
+		self.screen_thread()
+		print 'Starting Map Thread'
+		self.map_thread()
 
 	def update_tele(self, servertext):
 		self.gui.statusValue.set(servertext)
@@ -106,7 +109,7 @@ class Player(object):
 							self.lidar_dist = float(sn[2])*0.39370
 							self.gui.lidarValue.set(str(self.lidar_dist)+" in")
 							self.lidarDict.update({sn[3]: sn[2]})
-							self.gui.map.newpoint()
+							#self.gui.map.newpoint()
 						if sn[1] == "Compass":
 							# sn[2] = heading  sn[3] = timestamp
 							self.gui.compassValue.set(geo.direction_name(float(sn[2])))
@@ -122,15 +125,18 @@ class Player(object):
 							self.gui.pantiltValue.set("pan: "+str(self.pan_angle)+" tilt: "+str(self.tilt_angle))
 							self.panDict.update({sn[4]: sn[2]})
 							self.tiltDict.update({sn[4]: sn[3]})
-							self.gui.map.newpoint()
+							#self.gui.map.newpoint()
 			time.sleep(.5)
 
 	def map_plot(self, lidar, compass, pan, tilt):
 		while True:
-			while not lidar.empty():
+			print 'Outer loop'
+			while len(lidar) > 0 and len(compass) > 0 and len(pan) > 0 and len(tilt) > 0:
 				cmp = lidar.popitem(last=False)
-				# self.gui.map.new_point(compass.get(cmp[0]), pan.get(cmp[0]), tilt.get(cmp[0]), cmp[1])
+				print cmp
+				self.gui.map.new_point(compass.get(cmp[0]), pan.get(cmp[0]), tilt.get(cmp[0]), cmp[1])
 			time.sleep(1)
+		time.sleep(1)
 
 
 
