@@ -87,7 +87,7 @@ class gui(object):
 		self.statusLabel.pack(side=tk.LEFT, expand=tk.YES, fill=tk.BOTH)
 
 		# Pack a canvas into the map frame for plotting points
-		self.mapCanvas = tk.Canvas(self.mapFrame, bg="white", width=1, height=1)
+		self.mapCanvas = tk.Canvas(self.mapFrame, bg="black", width=1, height=1)
 		self.mapCanvas.pack(expand=tk.YES, fill=tk.BOTH)
 		self.mapCanvas.bind("<Configure>", self.map.mapresize)
 
@@ -184,9 +184,9 @@ class map(object):
 		if event.width != 0 and event.height != 0:
 			self.mapCanvas_width, self.mapCanvas_height = event.width, event.height
 		# Draw x-axis
-		self.gui.mapCanvas.create_line(0, self.mapCanvas_height/2, self.mapCanvas_width, self.mapCanvas_height/2, dash=2, arrow=tk.BOTH)
+		self.gui.mapCanvas.create_line(0, self.mapCanvas_height/2, self.mapCanvas_width, self.mapCanvas_height/2, dash=2, arrow=tk.BOTH, fill="gray35")
 		# Draw y-axis
-		self.gui.mapCanvas.create_line(self.mapCanvas_width/2, 0, self.mapCanvas_width/2, self.mapCanvas_height, dash=2, arrow=tk.BOTH)
+		self.gui.mapCanvas.create_line(self.mapCanvas_width/2, 0, self.mapCanvas_width/2, self.mapCanvas_height, dash=2, arrow=tk.BOTH, fill="gray35")
 		for point in self.gui.master_object.pointlist:
 			self.plotpoint(*point)
 
@@ -195,7 +195,28 @@ class map(object):
 		x_center = (self.mapCanvas_width/2) + x_center
 		y_center = (self.mapCanvas_height/2) - y_center
 		# Plot the point as a circle centered on the coords given
-		self.gui.mapCanvas.create_oval(x_center-1, y_center-1, x_center+1, y_center+1, fill="red")
+		self.gui.mapCanvas.create_oval(x_center-1, y_center-1, x_center+1, y_center+1, fill="red", disabledoutline="1")
+
+	def colormap(self, percent):
+		# This function will take a value from 0 - 100 and return a color from red to blue respectively
+		if percent <= 20:
+			#from red to orange
+			rgb = "#%02x%02x%02x" % (255, percent*12.75, 0)
+		elif percent <= 40:
+			#from orange to yellow
+			percent = percent-20
+			rgb = "#%02x%02x%02x" % (255, percent*12.75, 0)
+		elif percent <= 60:
+			#from yellow to green
+			rgb = "#%02x%02x%02x" % (255, percent*12.75, 0)
+		elif percent <= 80:
+			#from green to blue
+			rgb = "#%02x%02x%02x" % (255, percent*12.75, 0)
+		elif percent <= 100:
+			#from blue to black
+			rgb = "#%02x%02x%02x" % (255, percent*12.75, 0)
+		else:
+			rgb = "#666666"
 
 	def getpoint(self, heading_degrees, pitch_degrees, distance):
 		# Convert heading degrees to radians
