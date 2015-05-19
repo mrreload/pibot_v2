@@ -16,7 +16,7 @@ class Lidar_Lite(Adafruit_I2C):
 	STATUS_REG = 0x47
 	VERSION_REG = 0x41
 
-	# ERROR_READ -1
+	ERROR_READ = -1
 
 	# Status Bits
 	STAT_BUSY = 0x01
@@ -29,17 +29,44 @@ class Lidar_Lite(Adafruit_I2C):
 	STAT_EYE = 0x80
 
 	def read_sensor(self):
-
 		hival = Adafruit_I2C.write8(self.sensor_address, self.MEASURE_REG, self.MEASURE_VAL)
 		sleep(.02)
-
 		loval = Adafruit_I2C.readU8(self.sensor_address, self.DISTANCE_REG_LO)
-
 		hival = Adafruit_I2C.readS8(self.sensor_address, self.DISTANCE_REG_HI)
 		return ((hival << 8) + loval)
 
+	def read_status(self):
+		value = "okay"
+		status = Adafruit_I2C.readU8(self.sensor_address, self.STATUS_REG)
+		if (status & self.STAT_BUSY):
+			value = "busy"
+		if (status & self.STAT_REF_OVER):
+			value = "reference overflow"
+		if (status & self.STAT_SIG_OVER):
+			value = "signal overflow"
+		if (status & self.STAT_PIN):
+			value = "mode select pin"
+		if (status & self.STAT_SECOND_PEAK):
+			value = "second peak"
+		if (status & self.STAT_TIME):
+			value = "active between pairs"
+		if (status & self.STAT_INVALID):
+			value = "no signal"
+		if (status & self.STAT_EYE):
+			value = " eye safety"
+		return value
 
-
-
-
-
+	def read_raw(self, reg, allowZero):
+		i = 0
+		val = ""
+		sleep(.001)
+		while True:
+			val = Adafruit_I2C.readU8(self.sensor_address, reg)
+			if val == self.ERROR_READ or (val==0 and not allowZero):
+				sleep(.02)
+				if i > 50:
+					print "Timeout"
+					return self.ERROR_READ
+				i += 1
+			else:
+				return val
