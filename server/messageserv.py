@@ -51,9 +51,9 @@ class MessageServ(object):
 		elif data == "tilt_down":
 			self.tilt.addDegree(self.degree_to_move)
 		elif data == "pan_left":
-			self.pan.addDegree(-self.degree_to_move)
-		elif data == "pan_right":
 			self.pan.addDegree(self.degree_to_move)
+		elif data == "pan_right":
+			self.pan.addDegree(-self.degree_to_move)
 		elif data == "reset":
 			self.pan.moveToDegree(0)
 			self.tilt.moveToDegree(0)
@@ -63,4 +63,4 @@ class MessageServ(object):
 			print("What happened?", data)
 
 		# Return the current position oof the pan and tilt servos in degrees
-		return self.pan.curDegree, self.tilt.curDegree
+		return -self.pan.curDegree, -self.tilt.curDegree

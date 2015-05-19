@@ -121,7 +121,7 @@ class Player(object):
 						if sn[1] == "PanTilt":
 							# sn[2] = pan degrees, sn[3] = tilt degrees, sn[4] = timestamp
 							self.pan_angle = float(sn[2])
-							self.tilt_angle = -1*(float(sn[3]))
+							self.tilt_angle = float(sn[3])
 							self.gui.pantiltValue.set("pan: "+str(self.pan_angle)+" tilt: "+str(self.tilt_angle))
 							self.panDict.update({sn[4]: sn[2]})
 							self.tiltDict.update({sn[4]: sn[3]})

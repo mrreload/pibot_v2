@@ -177,6 +177,8 @@ class gui(object):
 class map(object):
 	def __init__(self, gui):
 		self.gui = gui
+		self.mapCanvas_height = 0
+		self.mapCanvas_width = 0
 
 	def mapresize(self, event):
 		# Clear current map for resize
@@ -209,14 +211,14 @@ class map(object):
 			rgb = "#%02x%02x%02x" % (percent, 255, 0)
 		elif percent <= 60:
 			#from yellow to green
-			rgb = "#%02x%02x%02x" % (0, 255, percent*12.75)
+			rgb = "#%02x%02x%02x" % (0, 255, (percent-40)*12.75)
 		elif percent <= 80:
 			#from green to blue
-			percent = abs(((percent-20)*12.75)-255)
+			percent = abs(((percent-60)*12.75)-255)
 			rgb = "#%02x%02x%02x" % (0, percent, 255)
 		elif percent <= 100:
 			#from blue to black
-			percent = abs(((percent-20)*12.75)-255)
+			percent = abs(((percent-60)*12.75)-255)
 			rgb = "#%02x%02x%02x" % (0, 0, percent)
 		else:
 			rgb = "#666666"
