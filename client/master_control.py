@@ -109,7 +109,7 @@ class Player(object):
 							self.lidar_dist = float(sn[2])*0.39370
 							self.gui.lidarValue.set(str(self.lidar_dist)+" in")
 							self.lidarDict.update({sn[3]: sn[2]})
-							#self.gui.map.newpoint()
+							self.gui.map.newpoint()
 						if sn[1] == "Compass":
 							# sn[2] = heading  sn[3] = timestamp
 							self.gui.compassValue.set(geo.direction_name(float(sn[2])))
