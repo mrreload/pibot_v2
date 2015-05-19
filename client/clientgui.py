@@ -196,7 +196,7 @@ class map(object):
 		y_center = (self.mapCanvas_height/2) - y_center
 		color = self.colormap(abs(z_center))
 		# Plot the point as a circle centered on the coords given
-		self.gui.mapCanvas.create_oval(x_center-1, y_center-1, x_center+1, y_center+1, fill=color, disabledoutline="1")
+		self.gui.mapCanvas.create_oval(x_center, y_center, x_center, y_center, fill=color, outline=color)
 
 	def colormap(self, percent):
 		# This function will take a value from 0 - 100 and return a color from red to blue respectively
@@ -220,7 +220,6 @@ class map(object):
 			rgb = "#%02x%02x%02x" % (0, 0, percent)
 		else:
 			rgb = "#666666"
-		print rgb
 		return rgb
 
 	def getpoint(self, heading_degrees, pitch_degrees, distance):
