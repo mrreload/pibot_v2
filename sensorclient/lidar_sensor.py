@@ -69,4 +69,4 @@ class Lidar_Lite(Adafruit_I2C):
 					return self.ERROR_READ
 				i += 1
 			else:
-				return val
+				return value
