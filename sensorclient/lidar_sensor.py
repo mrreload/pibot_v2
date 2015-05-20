@@ -31,8 +31,8 @@ class Lidar_Lite(Adafruit_I2C):
 	def read_sensor(self):
 		hival = Adafruit_I2C.write8(self.sensor_address, self.MEASURE_REG, self.MEASURE_VAL)
 		sleep(.02)
-		loval = Adafruit_I2C.readU8(self.sensor_address, self.DISTANCE_REG_LO)
-		hival = Adafruit_I2C.readS8(self.sensor_address, self.DISTANCE_REG_HI)
+		loval = self.read_raw(self.DISTANCE_REG_LO, False)
+		hival = self.read_raw(self.DISTANCE_REG_HI, True)
 		return ((hival << 8) + loval)
 
 	def read_status(self):
@@ -58,11 +58,11 @@ class Lidar_Lite(Adafruit_I2C):
 
 	def read_raw(self, reg, allowZero):
 		i = 0
-		val = ""
+		value = ""
 		sleep(.001)
 		while True:
-			val = Adafruit_I2C.readU8(self.sensor_address, reg)
-			if val == self.ERROR_READ or (val==0 and not allowZero):
+			value = Adafruit_I2C.readU8(self.sensor_address, reg)
+			if value == self.ERROR_READ or (value == 0 and not allowZero):
 				sleep(.02)
 				if i > 50:
 					print "Timeout"

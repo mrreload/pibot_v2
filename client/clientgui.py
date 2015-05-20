@@ -52,7 +52,9 @@ class gui(object):
 		self.headingValue = tk.StringVar()
 		self.headingValue.set("Heading!")
 		self.lidarValue = tk.StringVar()
-		self.lidarValue.set("Lidar inches!")
+		self.lidarValue.set("0 in")
+		self.lidarStatus = tk.StringVar()
+		self.lidarStatus.set("Waiting")
 		self.pantiltValue = tk.StringVar()
 		self.pantiltValue.set("pan: 0 tilt: 0")
 		self.gpsValue = tk.StringVar()
@@ -77,6 +79,8 @@ class gui(object):
 		self.headingLabel.pack(side=tk.TOP, expand=tk.NO, fill=tk.BOTH)
 		self.lidarLabel = tk.Label(self.lidarFrame, textvariable=self.lidarValue)
 		self.lidarLabel.pack(expand=tk.YES, fill=tk.BOTH)
+		self.lidarStatLabel = tk.Label(self.lidarFrame, textvariable=self.lidarStatus)
+		self.lidarStatLabel.pack(expand=tk.NO, fill=tk.BOTH)
 		self.pantiltLabel = tk.Label(self.lidarFrame, textvariable=self.pantiltValue)
 		self.pantiltLabel.pack(expand=tk.NO, fill=tk.BOTH)
 		self.gpsLabel = tk.Label(self.gpsFrame, textvariable=self.gpsValue)
@@ -192,11 +196,18 @@ class map(object):
 		for point in self.gui.master_object.pointlist:
 			self.plotpoint(*point)
 
+	def plotheading(self, x, y):
+		self.gui.mapCanvas.delete(self.headingline)
+		self.headingline = self.gui.MapCanvas.create_line(self.mapCanvas_width/2, self.mapCanvas_height/2, x, y, dash=1, arrow=tk.BOTH, fill="gray25")
+
 	def plotpoint(self, x_center, y_center, z_center):
 		# Convert from grid coords to real canvas coords
 		x_center = (self.mapCanvas_width/2) + x_center
 		y_center = (self.mapCanvas_height/2) - y_center
+		#Give the point a color based on the z value
 		color = self.colormap(abs(z_center))
+		#Show the heading of the sensor based on the x and y for this point
+		self.plotheading(x_center, y_center)
 		# Plot the point as a circle centered on the coords given
 		self.gui.mapCanvas.create_oval(x_center, y_center, x_center, y_center, fill=color, outline=color)
 
