@@ -28,7 +28,9 @@ class SensorMain(object):
 
 	def lidar(self):
 		while True:
-			self.snd_msg("Lidar," + str(self.sens1.read_sensor()) + "," + str(self.sens1.read_status()) + "," + str(round(time.time(), 2)))
+			message = "Lidar," + str(self.sens1.read_sensor()) + "," + str(self.sens1.read_status()) + "," + str(round(time.time(), 2))
+			print message
+			self.snd_msg(message)
 			time.sleep(1)
 
 	def compass(self):
