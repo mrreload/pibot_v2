@@ -17,7 +17,7 @@ class MessageServ(object):
 		self.degree_to_move = 5
 		# set to center
 		self.pan.moveToDegree(0)
-		self.tilt.moveToDegree(0)
+		self.tilt.moveToDegree(90)
 		self.q = Queue()
 
 	def read_command(self, data):
