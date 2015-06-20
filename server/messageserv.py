@@ -13,7 +13,7 @@ class MessageServ(object):
 		pwm = PWM(0X40)
 		# stdServo(pwm, frequency, channel, servoRange, minPulse, maxPulse, debug=False)
 		self.pan = stdServo(pwm, 50, 0, 180, 500, 2710)
-		self.tilt = stdServo(pwm, 50, 3, 180, 500, 2710)
+		self.tilt = stdServo(pwm, 50, 3, 190, 500, 2710)
 		self.degree_to_move = 5
 		# set to center
 		self.pan.moveToDegree(0)
