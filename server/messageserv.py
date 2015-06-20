@@ -47,9 +47,9 @@ class MessageServ(object):
 		elif data == "sweep_down":
 			self.tilt.moveToMax()
 		elif data == "tilt_up":
-			self.tilt.addDegree(-self.degree_to_move)
-		elif data == "tilt_down":
 			self.tilt.addDegree(self.degree_to_move)
+		elif data == "tilt_down":
+			self.tilt.addDegree(-self.degree_to_move)
 		elif data == "pan_left":
 			self.pan.addDegree(self.degree_to_move)
 		elif data == "pan_right":

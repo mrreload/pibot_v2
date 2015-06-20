@@ -32,7 +32,7 @@ class Player(object):
 			path = os.path.split(__file__)[0]
 		self.config.read(os.path.join(os.path.dirname(path), 'client.conf'))
 		if len(self.config.sections()) <= 0:
-			print "Config file not present, copying default"
+			print('Config file not present, copying default')
 			self.config.read(os.path.join(path, 'client.conf'))
 			with open(os.path.join(os.path.dirname(path), 'client.conf'), "w") as conf:
 				self.config.write(conf)
@@ -48,7 +48,7 @@ class Player(object):
 		hb = geo.xyz(my_lat, my_lon)
 		la = geo.xyz(34.0522340, -118.2436850)
 		true_north = geo.great_circle_angle(hb, la, geo.geographic_northpole)
-		print "True North " + str(true_north)
+		print('True North ' + str(true_north))
 		self.compass_heading = 0
 		self.pan_angle = 0
 		self.tilt_angle = 0
@@ -105,12 +105,12 @@ class Player(object):
 					sn = cmd.split(',')
 					if sn[0] == "Sensor":
 						if sn[1] == "Lidar":
-							# sn[2] = measurement  sn[3] = timestamp
+							# sn[2] = measurement  sn[3] = status sn[4] = timestamp
 							self.lidar_dist = float(sn[2])*0.39370
 							self.gui.lidarValue.set(str(self.lidar_dist)+" in")
 							self.gui.lidarStatus.set(sn[3])
 							self.lidarDict.update({sn[4]: sn[2]})
-							self.gui.map.newpoint()
+							# self.gui.map.newpoint()
 						if sn[1] == "Compass":
 							# sn[2] = heading  sn[3] = timestamp
 							self.gui.compassValue.set(geo.direction_name(float(sn[2])))
