@@ -56,7 +56,7 @@ class MessageServ(object):
 			self.pan.addDegree(-self.degree_to_move)
 		elif data == "reset":
 			self.pan.moveToDegree(0)
-			self.tilt.moveToDegree(0)
+			self.tilt.moveToDegree(90)
 		elif data == "sweep":
 			print("Not implemented!")  #os._exit(0)
 		else:
