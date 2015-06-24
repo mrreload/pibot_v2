@@ -103,8 +103,7 @@ class stdServo(object):
 		print "Previous values: %d Min %d Max" % (self.minPulse, self.maxPulse)
 		self.minPulse = 0
 		self.maxPulse = 5000
-		if debug:
-			print "Pulse Restrictions off."
+		print "Pulse Restrictions off."
 		pulse = int(raw_input("Enter guess for Minimum pulse:"))
 		while(pulse!=0):
 			minpulse = pulse
