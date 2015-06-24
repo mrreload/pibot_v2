@@ -25,7 +25,7 @@ class MessageServ(object):
 
 		print "Received message: " + data
 		if data == "exit":
-			os.exit(1)
+			os._exit(1)
 		# motor controls
 		elif data == "left":
 			pc.go_left()
@@ -62,5 +62,5 @@ class MessageServ(object):
 		else:
 			print("What happened?", data)
 
-		# Return the current position oof the pan and tilt servos in degrees
+		# Return the current position of the pan and tilt servos in degrees
 		return -self.pan.curDegree, -self.tilt.curDegree

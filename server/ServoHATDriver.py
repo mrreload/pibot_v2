@@ -97,6 +97,40 @@ class stdServo(object):
 	def moveToMax(self):
 		self.moveToDegree(self.maxDegree)
 
+	def calibrate(self):
+		minpulse = self.minPulse
+		maxpulse = self.maxPulse
+		print "Previous values: %d Min %d Max" % (self.minPulse, self.maxPulse)
+		self.minPulse = 0
+		self.maxPulse = 5000
+		if debug:
+			print "Pulse Restrictions off."
+		pulse = int(raw_input("Enter guess for Minimum pulse:"))
+		while(pulse!=0):
+			minpulse = pulse
+			self.setPulse(minpulse)
+			print "Enter 0 to confirm, or"
+			pulse = int(raw_input("Enter another guess for Minimum pulse:"))
+		pulse = int(raw_input("Enter guess for Maximum pulse:"))
+		while(pulse!=0):
+			maxpulse = pulse
+			self.setPulse(maxpulse)
+			print "Enter 0 to confirm, or"
+			pulse = int(raw_input("Enter another guess for Maximum pulse:"))
+		print "Entered values: %d Min %d Max" % (minpulse, maxpulse)
+		confirm = raw_input("Save these values? (y/n):")
+		while True:
+			if(confirm="y"):
+				self.minPulse = minpulse
+				self.maxPulse = maxpulse
+				print "Values saved and set."
+				break
+			elif(confirm="n"):
+				print "Values trashed."
+				break
+			else:
+				confirm = raw_input("Please enter \"y\" or \"n\":")
+
 class contServo(object):
 	def __init__(self, pwm, frequency, channel, neutralPulse, minPulse, maxPulse, revTime, Trim, debug=False):
 		self.frequency = float(frequency)		#Set frequency in Hertz
