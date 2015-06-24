@@ -120,12 +120,12 @@ class stdServo(object):
 		print "Entered values: %d Min %d Max" % (minpulse, maxpulse)
 		confirm = raw_input("Save these values? (y/n):")
 		while True:
-			if(confirm="y"):
+			if(confirm=="y"):
 				self.minPulse = minpulse
 				self.maxPulse = maxpulse
 				print "Values saved and set."
 				break
-			elif(confirm="n"):
+			elif(confirm=="n"):
 				print "Values trashed."
 				break
 			else:
